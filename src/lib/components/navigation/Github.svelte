@@ -3,7 +3,7 @@
 
 <a
 	class="githubIcon"
-	href="https://github.com/gabrielatwell1987/busybat"
+	href="https://github.com/gabreatwell/busybat"
 	target="_blank"
 	aria-label="github link"
 >
