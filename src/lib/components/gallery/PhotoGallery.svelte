@@ -1,17 +1,18 @@
-<script>
+<script lang="ts">
 	import { browser } from '$app/environment';
 	import ViewTransition from '$lib/components/layout/ViewTransition.svelte';
 	import VerticalTitle from '$lib/components/layout/VerticalTitle.svelte';
 	import galleryImages from './photoGallery.json';
+	import type { GalleryImage } from '$lib/types';
 
 	let currentSlide = $state(0);
 	let supportsViewTransitions = $state(false);
 
 	// gallery images
-	const images = galleryImages;
+	const images: GalleryImage[] = galleryImages as GalleryImage[];
 
 	// Function to handle slide change
-	function changeSlide(index) {
+	function changeSlide(index: number) {
 		// Use View Transition API if available
 		if (supportsViewTransitions) {
 			document.startViewTransition(() => {
@@ -27,7 +28,7 @@
 	}
 
 	// Function to announce slide changes to screen readers
-	function announceSlideChange(index) {
+	function announceSlideChange(index: number) {
 		const announcer = document.getElementById('slide-announcer');
 		if (announcer) {
 			const slideNumber = index + 1;
@@ -38,7 +39,7 @@
 	}
 
 	// Separate function to update slide state
-	function updateSlide(index) {
+	function updateSlide(index: number) {
 		if (index < 0) {
 			currentSlide = images.length - 1;
 		} else if (index >= images.length) {
@@ -53,7 +54,7 @@
 	}
 
 	// Keyboard navigation handler
-	function handleKeydown(event) {
+	function handleKeydown(event: KeyboardEvent) {
 		switch (event.key) {
 			case 'ArrowLeft':
 				event.preventDefault();
@@ -77,12 +78,12 @@
 	}
 
 	// Function to find slide index by ID
-	function findSlideIndexById(id) {
+	function findSlideIndexById(id: string): number {
 		return images.findIndex((image) => image.id === id);
 	}
 
 	// Function to navigate to slide by ID
-	function navigateToSlide(id) {
+	function navigateToSlide(id: string) {
 		const index = findSlideIndexById(id);
 		if (index !== -1) {
 			changeSlide(index);
@@ -110,7 +111,7 @@
 
 		// Auto-focus the keyboard handler for immediate arrow key navigation
 		// Use preventScroll to avoid scrolling the page when focusing
-		const keyboardHandler = document.querySelector('.carousel-keyboard-handler');
+		const keyboardHandler = document.querySelector<HTMLElement>('.carousel-keyboard-handler');
 		if (keyboardHandler) {
 			keyboardHandler.focus({ preventScroll: true });
 		}

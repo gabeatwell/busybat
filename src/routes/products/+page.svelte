@@ -1,13 +1,16 @@
-<script>
+<script lang="ts">
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 	import SEO from '$lib/data/SEO.svelte';
 	import VerticalTitle from '$lib/components/layout/VerticalTitle.svelte';
 	import pink from '$lib/assets/pink-leo.webp';
 	import Product from '$lib/components/products/Product.svelte';
-	import products from '$lib/components/products/productList.json';
+	import productsData from '$lib/components/products/productList.json';
 	import ProductFilter from '$lib/components/products/ProductFilter.svelte';
 	import { addToCart } from '$lib/components/products/CartStore.svelte';
+	import type { Product as ProductType } from '$lib/types';
+
+	const products = productsData as unknown as ProductType[];
 
 	let selectedCategory = $state('All');
 	let supportsViewTransitions = $state(false);
@@ -19,18 +22,18 @@
 		isFirefox = browser && navigator.userAgent.toLowerCase().includes('firefox');
 	});
 
-	function onCategoryChange(category) {
+	function onCategoryChange(category: string) {
 		selectedCategory = category;
 	}
 
-	function shouldHideProduct(product) {
+	function shouldHideProduct(product: ProductType) {
 		// If no category is set on the product, consider it uncategorized
 		if (!product.category) return selectedCategory !== 'All';
 
 		return selectedCategory !== 'All' && product.category !== selectedCategory;
 	}
 
-	function getImageFit(category) {
+	function getImageFit(category: string) {
 		return containFitCategories.includes(category) ? 'contain' : 'cover';
 	}
 </script>
@@ -49,7 +52,7 @@
 			<Product
 				id={product.id}
 				name={product.name}
-				price={product.price}
+				price={product.price ?? 0}
 				imageUrl={product.imageUrl}
 				description={product.description}
 				inStock={product.inStock}

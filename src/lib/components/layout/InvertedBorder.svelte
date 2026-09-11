@@ -1,5 +1,6 @@
-<script>
-	let { text, title, src, alt } = $props();
+<script lang="ts">
+	let { text, title, src, alt }: { text: string; title: string; src: string; alt: string } =
+		$props();
 </script>
 
 <div class="inverted-border">

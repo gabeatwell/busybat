@@ -1,12 +1,23 @@
-<script>
-	/** @type {{src: any, alt: any}} */
-	let { src, alt, width = 'auto', inline = 'center' } = $props();
+<script lang="ts">
+	let {
+		src,
+		alt,
+		width = 'auto',
+		inline = 'center'
+	}: {
+		src: string;
+		alt: string;
+		width?: string;
+		inline?: string;
+	} = $props();
 
-	let imageElement;
+	let imageElement: HTMLImageElement | undefined = $state();
 
 	$effect(() => {
+		if (!imageElement) return;
+
 		const observer = new IntersectionObserver(([entry], observer) => {
-			if (entry.isIntersecting) {
+			if (entry.isIntersecting && imageElement) {
 				imageElement.src = src;
 				observer.unobserve(imageElement);
 			}

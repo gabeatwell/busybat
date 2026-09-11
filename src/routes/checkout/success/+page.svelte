@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import SEO from '$lib/data/SEO.svelte';
 	import { page } from '$app/stores';
 
@@ -6,21 +6,23 @@
 	let isVerified = $state(false);
 
 	// Optional: Verify the payment with your backend
-	$effect(async () => {
+	$effect(() => {
 		if (sessionId) {
-			try {
-				const response = await fetch('/api/verify-payment', {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ sessionId })
-				});
+			(async () => {
+				try {
+					const response = await fetch('/api/verify-payment', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ sessionId })
+					});
 
-				if (response.ok) {
-					isVerified = true;
+					if (response.ok) {
+						isVerified = true;
+					}
+				} catch (error) {
+					console.error('Error verifying payment:', error);
 				}
-			} catch (error) {
-				console.error('Error verifying payment:', error);
-			}
+			})();
 		}
 	});
 </script>

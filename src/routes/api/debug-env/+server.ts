@@ -1,5 +1,6 @@
-/** @type {import('./$types').RequestHandler} */
-export async function GET() {
+import type { RequestHandler } from './$types';
+
+export const GET: RequestHandler = async () => {
 	const envVars = {
 		KV_URL: process.env.KV_URL ? 'SET' : 'MISSING',
 		KV_REST_API_URL: process.env.KV_REST_API_URL ? 'SET' : 'MISSING',
@@ -14,4 +15,4 @@ export async function GET() {
 	return new Response(JSON.stringify(envVars, null, 2), {
 		headers: { 'Content-Type': 'application/json' }
 	});
-}
+};

@@ -1,8 +1,13 @@
-<script>
-	let { title } = $props();
+<script lang="ts">
+	interface Props {
+		title: string;
+		class?: string;
+	}
+
+	let { title, class: className = '' }: Props = $props();
 </script>
 
-<div class="title-container">
+<div class="title-container {className}">
 	<h1>{title}</h1>
 </div>
 

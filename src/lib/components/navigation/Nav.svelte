@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { goto } from '$app/navigation';
 	import Title from '$lib/components/layout/Title.svelte';
 	import logo from '$lib/assets/logo.webp';
@@ -10,14 +10,14 @@
 
 	const toggleMenu = () => (isOpen = !isOpen);
 
-	const handleLinkClick = (event) => {
+	const handleLinkClick = (event: MouseEvent) => {
 		if (isOpen) {
 			isOpen = false;
 
-			const href = event.currentTarget.getAttribute('href');
+			const href = (event.currentTarget as HTMLElement).getAttribute('href');
 
 			setTimeout(() => {
-				goto(href);
+				if (href) goto(href);
 			}, 10);
 
 			event.preventDefault();

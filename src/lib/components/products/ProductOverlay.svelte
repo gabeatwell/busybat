@@ -1,5 +1,13 @@
-<script>
-	let { isEnlarged, isFirefox, onToggleEnlargement } = $props();
+<script lang="ts">
+	let {
+		isEnlarged,
+		isFirefox,
+		onToggleEnlargement
+	}: {
+		isEnlarged: boolean;
+		isFirefox: boolean;
+		onToggleEnlargement: (e?: MouseEvent | KeyboardEvent) => void;
+	} = $props();
 </script>
 
 {#if isEnlarged}

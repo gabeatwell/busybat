@@ -1,8 +1,25 @@
-<script>
-	import { formatPrice } from './productFunctions.svelte.js';
+<script lang="ts">
+	import { formatPrice } from './productFunctions.svelte';
 
-	let { name, price, description, id, isEnlarged, context, supportsViewTransitions, isFirefox } =
-		$props();
+	let {
+		name,
+		price,
+		description,
+		id,
+		isEnlarged,
+		context,
+		supportsViewTransitions,
+		isFirefox
+	}: {
+		name: string;
+		price: number;
+		description: string;
+		id: string;
+		isEnlarged: boolean;
+		context: string;
+		supportsViewTransitions: boolean;
+		isFirefox: boolean;
+	} = $props();
 </script>
 
 <div class="product-line" class:expanded={isEnlarged}>

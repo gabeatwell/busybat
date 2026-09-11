@@ -1,13 +1,14 @@
-<script>
+<script lang="ts">
 	import SEO from '$lib/data/SEO.svelte';
 	import VerticalTitle from '$lib/components/layout/VerticalTitle.svelte';
 	import { slide } from 'svelte/transition';
+	import type { Post } from '$lib/types';
 
 	let { data } = $props();
-	let posts = $state([]);
+	let posts = $state<Post[]>([]);
 	let loading = $state(true);
-	let error = $state(null);
-	let expandedPosts = $state(new Set());
+	let error = $state<string | null>(null);
+	let expandedPosts = $state(new Set<string | number>());
 
 	$effect(() => {
 		loadPosts();
@@ -23,7 +24,7 @@
 			}
 			posts = await res.json();
 		} catch (err) {
-			error = err.message;
+			error = err instanceof Error ? err.message : 'Unknown error';
 			console.error('Failed to load posts:', err);
 		} finally {
 			loading = false;
@@ -31,7 +32,7 @@
 	}
 
 	// Simplified mobile-friendly click handler
-	function handleExpandToggle(postId) {
+	function handleExpandToggle(postId: string | number) {
 		if (expandedPosts.has(postId)) {
 			expandedPosts.delete(postId);
 		} else {

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { browser } from '$app/environment';
 	import { getCartData } from '$lib/components/products/CartStore.svelte';
 

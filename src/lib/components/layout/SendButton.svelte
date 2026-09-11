@@ -1,5 +1,5 @@
-<script>
-	let { title } = $props();
+<script lang="ts">
+	let { title }: { title: string } = $props();
 </script>
 
 <button type="submit">{title}</button>

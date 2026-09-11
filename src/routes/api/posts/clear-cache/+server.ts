@@ -1,7 +1,8 @@
 import { json } from '@sveltejs/kit';
-import { clearCache, reloadDefaultPosts } from '$lib/data/kv-storage.js';
+import { clearCache, reloadDefaultPosts } from '$lib/data/kv-storage';
+import type { RequestHandler } from './$types';
 
-export async function POST() {
+export const POST: RequestHandler = async () => {
 	try {
 		await clearCache();
 		const newDefaults = await reloadDefaultPosts();
@@ -14,4 +15,4 @@ export async function POST() {
 		console.error('Error clearing cache:', error);
 		return json({ error: 'Failed to clear cache' }, { status: 500 });
 	}
-}
+};

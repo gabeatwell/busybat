@@ -1,7 +1,7 @@
-<script>
+<script lang="ts">
 	import pinkLeo from '$lib/assets/pink-leo.webp';
 
-	let { year = new Date().getFullYear(), name } = $props();
+	let { year = new Date().getFullYear(), name }: { year: number; name: string } = $props();
 </script>
 
 <footer>

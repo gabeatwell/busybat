@@ -1,6 +1,19 @@
-<script>
-	let { inStock, isLoading, isAddedToCart, isEnlarged, onAddToCart, onToggleEnlargement } =
-		$props();
+<script lang="ts">
+	let {
+		inStock,
+		isLoading,
+		isAddedToCart,
+		isEnlarged,
+		onAddToCart,
+		onToggleEnlargement
+	}: {
+		inStock: boolean;
+		isLoading: boolean;
+		isAddedToCart: boolean;
+		isEnlarged: boolean;
+		onAddToCart: (e: MouseEvent) => void;
+		onToggleEnlargement: (e?: MouseEvent | KeyboardEvent) => void;
+	} = $props();
 </script>
 
 {#if isEnlarged}

@@ -1,17 +1,21 @@
-<script>
-	import { page } from '$app/stores';
+<script lang="ts">
+	import { page } from '$app/state';
 	import logo from '$lib/assets/logo.webp';
 
-	/** @type {{title: string, description: string, keywords: string}} */
-	let { title, description, keywords } = $props();
+	interface Props {
+		title: string;
+		description: string;
+		keywords: string;
+	}
 
-	let url = $derived($page.url.href);
+	let { title, description, keywords }: Props = $props();
+
 	let siteName = 'Busy Bat Sewing Co.';
-	let baseUrl = $derived($page.url.origin);
+	let baseUrl = $derived(page.url.origin);
 	let logoUrl = $derived(`${baseUrl}${logo}`);
 
 	let canonicalUrl = $derived.by(() => {
-		const { origin, pathname } = $page.url;
+		const { origin, pathname } = page.url;
 		const normalizedPath = pathname === '/' ? '/' : pathname.replace(/\/$/, '');
 		return `${origin}${normalizedPath}`;
 	});

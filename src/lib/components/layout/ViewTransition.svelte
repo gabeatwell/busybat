@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { onNavigate } from '$app/navigation';
 	import { browser } from '$app/environment';
 

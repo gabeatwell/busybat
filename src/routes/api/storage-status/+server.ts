@@ -1,5 +1,6 @@
-/** @type {import('./$types').RequestHandler} */
-export async function GET() {
+import type { RequestHandler } from './$types';
+
+export const GET: RequestHandler = async () => {
 	const hasKVEnvVars = process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN;
 	let isDatabaseConnected = false;
 	let statusMessage = '';
@@ -30,4 +31,4 @@ export async function GET() {
 			headers: { 'Content-Type': 'application/json' }
 		}
 	);
-}
+};

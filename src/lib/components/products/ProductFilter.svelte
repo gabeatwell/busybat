@@ -1,8 +1,15 @@
-<script>
+<script lang="ts">
 	import { browser } from '$app/environment';
+	import type { Product } from '$lib/types';
 
 	// Props from parent
-	let { products, onCategoryChange } = $props();
+	let {
+		products,
+		onCategoryChange
+	}: {
+		products: Product[];
+		onCategoryChange: (category: string) => void;
+	} = $props();
 
 	// States for filter
 	let allCategories = $state(['All', 'Bags', 'Clothing']);
@@ -18,8 +25,8 @@
 			});
 		}
 	}); // Handle category change
-	function handleCategoryChange(event) {
-		const newCategory = event.target.value;
+	function handleCategoryChange(event: Event) {
+		const newCategory = (event.target as HTMLSelectElement).value;
 		selectedCategory = newCategory;
 	}
 

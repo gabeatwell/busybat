@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import SEO from '$lib/data/SEO.svelte';
 	import { goto } from '$app/navigation';
 	import VerticalTitle from '$lib/components/layout/VerticalTitle.svelte';
@@ -46,11 +46,12 @@
 	}
 
 	// Enhanced keyboard support
-	function handleKeyDown(event) {
+	function handleKeyDown(event: KeyboardEvent) {
 		// Allow Enter key to submit form from any input
 		if (
 			event.key === 'Enter' &&
-			(event.target.id === 'username' || event.target.id === 'password')
+			((event.target as HTMLElement).id === 'username' ||
+				(event.target as HTMLElement).id === 'password')
 		) {
 			if (username.trim() && password.trim()) {
 				login();

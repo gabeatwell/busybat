@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { page } from '$app/stores';
 	import { fade } from 'svelte/transition';
 	import SEO from '$lib/data/SEO.svelte';
@@ -18,7 +18,7 @@
 	</div>
 
 	<div class="error">
-		<p>{$page.error.message}</p>
+		<p>{$page.error?.message ?? 'An unexpected error occurred.'}</p>
 	</div>
 </main>
 

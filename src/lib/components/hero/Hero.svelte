@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import logo from '$lib/assets/logo.webp';
 	import smallfinal from '$lib/assets/small-final.webp';
 	import Button from '$lib/components/layout/Button.svelte';

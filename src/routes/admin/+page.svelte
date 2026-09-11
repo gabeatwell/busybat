@@ -1,33 +1,23 @@
-<script>
+<script lang="ts">
 	import SEO from '$lib/data/SEO.svelte';
 	import { goto } from '$app/navigation';
 	import VerticalTitle from '$lib/components/layout/VerticalTitle.svelte';
+	import type { Post } from '$lib/types';
 
 	let { data } = $props();
 	let title = $state('');
 	let content = $state('');
-	let imageFile = $state(null);
-	let imagePreview = $state(null);
-	let editingPost = $state(null);
-	let posts = $state([]);
+	let imageFile = $state<File | null>(null);
+	let imagePreview = $state<string | null>(null);
+	let editingPost = $state<Post | null>(null);
+	let posts = $state<Post[]>([]);
 	let loading = $state(false);
-	let storageStatus = $state(null);
-	let expandedPosts = $state(new Set());
+	let expandedPosts = $state(new Set<number>());
 
 	// Load posts and storage status on component mount
 	$effect(() => {
 		loadPosts();
-		checkStorageStatus();
 	});
-
-	async function checkStorageStatus() {
-		try {
-			const res = await fetch('/api/storage-status');
-			storageStatus = await res.json();
-		} catch (error) {
-			console.error('Failed to check storage status:', error);
-		}
-	}
 
 	async function loadPosts() {
 		loading = true;
@@ -102,7 +92,7 @@
 		}
 	}
 
-	function editPost(post) {
+	function editPost(post: Post) {
 		editingPost = post;
 		title = post.title;
 		content = post.content;
@@ -122,14 +112,14 @@
 		clearImage();
 	}
 
-	function handleImageChange(event) {
-		const file = event.target.files?.[0];
+	function handleImageChange(event: Event) {
+		const file = (event.target as HTMLInputElement).files?.[0];
 		if (file) {
 			imageFile = file;
 			// Create preview URL
 			const reader = new FileReader();
 			reader.onload = (e) => {
-				imagePreview = e.target?.result;
+				imagePreview = e.target?.result as string;
 			};
 			reader.readAsDataURL(file);
 		}
@@ -139,11 +129,11 @@
 		imageFile = null;
 		imagePreview = null;
 		// Clear the file input
-		const fileInput = document.getElementById('image');
+		const fileInput = document.getElementById('image') as HTMLInputElement | null;
 		if (fileInput) fileInput.value = '';
 	}
 
-	function togglePostExpansion(postId) {
+	function togglePostExpansion(postId: number) {
 		if (expandedPosts.has(postId)) {
 			expandedPosts.delete(postId);
 		} else {
@@ -153,13 +143,13 @@
 
 		// Announce the change to screen readers
 		const expanded = expandedPosts.has(postId);
-		const button = document.querySelector(`[aria-controls="post-content-${postId}"]`);
+		const button = document.querySelector<HTMLElement>(`[aria-controls="post-content-${postId}"]`);
 		if (button) {
 			button.setAttribute('aria-expanded', expanded.toString());
 		}
 	}
 
-	async function deletePost(id) {
+	async function deletePost(id: string | number) {
 		// More accessible confirmation
 		const confirmed = confirm('Are you sure you want to delete this post?');
 
@@ -192,6 +182,12 @@
 	<!-- Block search engine indexing -->
 	<meta name="robots" content="noindex, nofollow" />
 </svelte:head>
+
+<SEO
+	title="Admin Dashboard &middot; Busy Little Bat Sewing"
+	description="Admin dashboard for managing blog posts and content."
+	keywords="admin, dashboard, blog management, content management"
+/>
 
 <VerticalTitle title="Admin Dashboard" />
 

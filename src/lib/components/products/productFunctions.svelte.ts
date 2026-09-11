@@ -1,8 +1,15 @@
 import { browser } from '$app/environment';
-import { createAccessibilityHelpers } from '$lib/components/products/uiFunctions.svelte.js';
+import { createAccessibilityHelpers } from '$lib/components/products/uiFunctions.svelte';
+import type {
+	DropdownHandlers,
+	DropdownToggleSetter,
+	EnlargementContextData,
+	EnlargementToggleSetter,
+	ToggleEnlargementFn
+} from '$lib/types';
 
 // Format price with currency
-export function formatPrice(value) {
+export function formatPrice(value: number): string {
 	return new Intl.NumberFormat('en-US', {
 		style: 'currency',
 		currency: 'USD'
@@ -10,8 +17,8 @@ export function formatPrice(value) {
 }
 
 // Handle focus trapping for accessibility
-export function trapFocus(element) {
-	const focusableElements = element.querySelectorAll(
+export function trapFocus(element: HTMLElement): void {
+	const focusableElements = element.querySelectorAll<HTMLElement>(
 		'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
 	);
 
@@ -38,13 +45,15 @@ export function trapFocus(element) {
 }
 
 // Factory function for adding to cart
-export function handleAddToCart(e) {
+export function handleAddToCart(e: MouseEvent): void {
 	e.stopPropagation();
 }
 
 // Factory function for dropdown toggle
-export function createToggleDropdownHandler(setState) {
-	return function toggleDropdown(event) {
+export function createToggleDropdownHandler(
+	setState: DropdownToggleSetter
+): (event: Event) => void {
+	return function toggleDropdown(event: Event): void {
 		event.stopPropagation();
 		event.preventDefault();
 
@@ -60,11 +69,17 @@ export function createToggleDropdownHandler(setState) {
 }
 
 // Factory function for enlargement toggle
-export function createToggleEnlargementHandler(contextData, setState) {
-	return function toggleEnlargement(e) {
+export function createToggleEnlargementHandler(
+	contextData: EnlargementContextData,
+	setState: EnlargementToggleSetter
+): ToggleEnlargementFn {
+	return function toggleEnlargement(e?: MouseEvent | KeyboardEvent | boolean): void {
 		// Prevent enlargement toggle if the click came from a select element
-		if (e && (e.target.tagName === 'SELECT' || e.target.closest('select'))) {
-			return;
+		if (e && typeof e !== 'boolean') {
+			const target = e.target as HTMLElement;
+			if (target.tagName === 'SELECT' || target.closest('select')) {
+				return;
+			}
 		}
 
 		const { id, context } = contextData;
@@ -74,11 +89,11 @@ export function createToggleEnlargementHandler(contextData, setState) {
 		// Select other products differently for Firefox
 		const otherProducts =
 			isFirefox || !supportsViewTransitions
-				? document.querySelectorAll(`.product-card:not(.product-id-${id})`)
-				: document.querySelectorAll(
+				? document.querySelectorAll<HTMLElement>(`.product-card:not(.product-id-${id})`)
+				: document.querySelectorAll<HTMLElement>(
 						`.product-card:not([style*="view-transition-name: ${context}-product-card-${id}"])`
 					);
-		const footer = document.querySelector('footer');
+		const footer = document.querySelector<HTMLElement>('footer');
 
 		if (supportsViewTransitions && !isFirefox) {
 			document.documentElement.style.setProperty('--view-transition-duration', '0.15s');
@@ -104,7 +119,9 @@ export function createToggleEnlargementHandler(contextData, setState) {
 				// Add a small delay when enlarging to ensure proper positioning
 				if (setState.isEnlarged()) {
 					setTimeout(() => {
-						const productInfo = document.querySelector('.product-card.enlarged .product-info');
+						const productInfo = document.querySelector<HTMLElement>(
+							'.product-card.enlarged .product-info'
+						);
 						if (productInfo) {
 							productInfo.scrollTo({ top: 0, behavior: 'instant' });
 							productInfo.scrollTop = 0;
@@ -190,8 +207,14 @@ export function createToggleEnlargementHandler(contextData, setState) {
 }
 
 // Dropdown state management (moved from uiFunctions.svelte.js)
-export function createDropdownHandlers() {
-	function handleDropdownState(isOpen, productId, isEnlarged, isFirefox, supportsViewTransitions) {
+export function createDropdownHandlers(): DropdownHandlers {
+	function handleDropdownState(
+		isOpen: boolean,
+		productId: string,
+		isEnlarged: boolean,
+		isFirefox: boolean,
+		supportsViewTransitions: boolean
+	) {
 		if (!isOpen && !isEnlarged) {
 			const { showOtherProducts } = createAccessibilityHelpers();
 			showOtherProducts(productId, 'default', isFirefox, supportsViewTransitions);
@@ -205,13 +228,13 @@ export function createDropdownHandlers() {
 
 // Factory function for handleDropdownState
 export function createHandleDropdownState(
-	dropdownHandlers,
-	id,
-	isEnlarged,
-	isFirefox,
-	supportsViewTransitions
-) {
-	return function handleDropdownState(isOpen) {
+	dropdownHandlers: DropdownHandlers,
+	id: string,
+	isEnlarged: boolean,
+	isFirefox: boolean,
+	supportsViewTransitions: boolean
+): (isOpen: boolean) => void {
+	return function handleDropdownState(isOpen: boolean): void {
 		dropdownHandlers.handleDropdownState(
 			isOpen,
 			id,

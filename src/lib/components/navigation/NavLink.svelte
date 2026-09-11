@@ -1,8 +1,15 @@
-<script>
-	import { page } from '$app/stores';
-	let { title, url, onclick } = $props();
+<script lang="ts">
+	import { page } from '$app/state';
 
-	let isCurrentPage = $derived($page.url.pathname === url);
+	interface Props {
+		title: string;
+		url: string;
+		onclick?: (e: MouseEvent) => void;
+	}
+
+	let { title, url, onclick }: Props = $props();
+
+	let isCurrentPage = $derived(page.url.pathname === url);
 </script>
 
 <a class="nav-link" href={url} {onclick} aria-current={isCurrentPage ? 'page' : undefined}

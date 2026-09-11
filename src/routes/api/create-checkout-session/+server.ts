@@ -1,13 +1,17 @@
 import { json } from '@sveltejs/kit';
 import Stripe from 'stripe';
+import type { RequestHandler } from './$types';
+import type { CartItem } from '$lib/types';
 
-/** @type {import('./$types').RequestHandler} */
-export async function POST({ request, url }) {
+export const POST: RequestHandler = async ({ request, url }) => {
 	try {
 		console.log('Creating checkout session...');
 
 		const stripe = new Stripe(import.meta.env.VITE_STRIPE_SECRET_KEY);
-		const { items, customerEmail } = await request.json();
+		const { items, customerEmail } = (await request.json()) as {
+			items: (CartItem & { stripe_price_id?: string; description?: string })[];
+			customerEmail?: string;
+		};
 
 		if (!items || items.length === 0) {
 			console.error('No items in cart');
@@ -43,14 +47,14 @@ export async function POST({ request, url }) {
 			const productName = item.size ? `${item.name} - Size ${item.size}` : item.name;
 			console.log(`Product name for Stripe: "${productName}"`); // Debug log
 
-			const productData = {
+			const productData: Stripe.Checkout.SessionCreateParams.LineItem.PriceData.ProductData = {
 				name: productName,
 				tax_code: 'txcd_35010000' // Tax code for general clothing
 			};
 
 			// Convert relative URL to absolute if needed
 			if (item.imageUrl) {
-				let imageUrl;
+				let imageUrl: string | undefined;
 				if (item.imageUrl.startsWith('/')) {
 					imageUrl = `${url.origin}${item.imageUrl}`;
 				} else if (isValidHttpUrl(item.imageUrl)) {
@@ -62,7 +66,7 @@ export async function POST({ request, url }) {
 					// Use higher resolution placeholder for development (1200x1200)
 					productData.images = [`https://picsum.photos/1200/1200?random=${item.id}`];
 					console.log('Using high-res placeholder image for development:', productData.images[0]);
-				} else {
+				} else if (imageUrl) {
 					productData.images = [imageUrl];
 					console.log('Added image to Stripe product:', imageUrl);
 				}
@@ -94,8 +98,8 @@ export async function POST({ request, url }) {
 				price_data: {
 					currency: 'usd',
 					product_data: productData,
-					unit_amount: Math.round(item.price * 100),
-					tax_behavior: 'exclusive' // Make sure tax is calculated on top of this price
+					unit_amount: Math.round((item.price ?? 0) * 100),
+					tax_behavior: 'exclusive' as const
 				},
 				quantity: item.quantity
 			};
@@ -128,14 +132,14 @@ export async function POST({ request, url }) {
 								value: 7
 							}
 						},
-						tax_behavior: 'exclusive' // Make shipping taxable
+						tax_behavior: 'exclusive' as const
 					}
 				}
 			],
 			automatic_tax: {
 				enabled: true
 			},
-			billing_address_collection: 'required', // Required for tax calculation
+			billing_address_collection: 'required',
 			success_url:
 				new URL('/checkout/success', url.origin).toString() + '?session_id={CHECKOUT_SESSION_ID}',
 			cancel_url: new URL('/checkout/canceled', url.origin).toString(),
@@ -146,12 +150,15 @@ export async function POST({ request, url }) {
 		return json({ sessionId: session.id });
 	} catch (error) {
 		console.error('Stripe checkout error:', error);
-		return json({ error: error.message }, { status: 500 });
+		return json(
+			{ error: error instanceof Error ? error.message : 'Unknown error' },
+			{ status: 500 }
+		);
 	}
-}
+};
 
 // Helper function to validate URLs
-function isValidHttpUrl(string) {
+function isValidHttpUrl(string: string): boolean {
 	try {
 		const url = new URL(string);
 		return url.protocol === 'http:' || url.protocol === 'https:';

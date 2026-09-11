@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import SendButton from '$lib/components/layout/SendButton.svelte';
 	import VerticalTitle from '$lib/components/layout/VerticalTitle.svelte';
 
@@ -7,7 +7,7 @@
 	let message = $state('');
 </script>
 
-<VerticalTitle title="Contact" class="vertical-title" />
+<VerticalTitle title="Contact" />
 
 <div class="content">
 	<div class="form-container">

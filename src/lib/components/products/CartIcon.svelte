@@ -1,11 +1,20 @@
-<script>
+<script lang="ts">
 	import { getCartData } from './CartStore.svelte';
+	import type { CartItem } from '$lib/types';
 
 	// Accept class, onclick, and navOpen props
-	let { class: className = '', onclick = undefined, navOpen = false } = $props();
+	let {
+		class: className = '',
+		onclick = undefined,
+		navOpen = false
+	}: {
+		class?: string;
+		onclick?: (e: MouseEvent) => void;
+		navOpen?: boolean;
+	} = $props();
 
 	// Get cart data from the store
-	let cart = $state([]);
+	let cart = $state<CartItem[]>([]);
 	$effect(() => {
 		const data = getCartData();
 		cart = data.cart;

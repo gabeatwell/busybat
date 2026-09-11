@@ -1,6 +1,3 @@
-<script>
-</script>
-
 <a
 	class="githubIcon"
 	href="https://github.com/gabreatwell/busybat"

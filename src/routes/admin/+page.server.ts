@@ -1,6 +1,7 @@
 import { redirect } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
 
-export async function load({ parent }) {
+export const load: PageServerLoad = async ({ parent }) => {
 	const { user } = await parent();
 
 	if (!user) {
@@ -10,4 +11,4 @@ export async function load({ parent }) {
 	return {
 		user
 	};
-}
+};

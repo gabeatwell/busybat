@@ -1,7 +1,16 @@
 import { browser } from '$app/environment';
 import { getCartData } from './CartStore.svelte';
+import type {
+	BrowserDetection,
+	CartState,
+	AddToCartHandler,
+	SelectHandlers,
+	AccessibilityHelpers,
+	DropdownHandlers,
+	CartItem
+} from '$lib/types';
 
-export function createBrowserDetection() {
+export function createBrowserDetection(): BrowserDetection {
 	const state = {
 		supportsViewTransitions: false,
 		isFirefox: false
@@ -43,9 +52,9 @@ export function createBrowserDetection() {
 }
 
 // Cart state management
-export function createCartState(productId) {
+export function createCartState(productId: string): CartState {
 	const state = {
-		cart: [],
+		cart: [] as CartItem[],
 		isAddedToCart: false,
 		selectedSize: ''
 	};
@@ -63,7 +72,7 @@ export function createCartState(productId) {
 		});
 	}
 
-	function setSelectedSize(size) {
+	function setSelectedSize(size: string) {
 		state.selectedSize = size;
 		updateCartState();
 	}
@@ -84,19 +93,27 @@ export function createCartState(productId) {
 }
 
 // Add to cart functionality
-export function createAddToCartHandler(productId, productData, cartState) {
+export function createAddToCartHandler(
+	productId: string,
+	productData: CartItem,
+	cartState: CartState
+): AddToCartHandler {
 	const state = {
 		isLoading: false
 	};
 
-	async function handleAddToCart(e, addToCart, toggleEnlargement) {
+	async function handleAddToCart(
+		e: MouseEvent,
+		addToCart: (product: CartItem) => void,
+		toggleEnlargement: (value: boolean) => void
+	) {
 		e.stopPropagation();
 
 		// Check if this product has size options and no size is selected
 		if (browser && productId === '3') {
 			const productCard = document.querySelector(`.product-card.product-id-${productId}`);
-			const selectElements = productCard?.querySelectorAll('select');
-			if (selectElements?.length > 0 && !cartState.selectedSize) {
+			const selectElements = productCard?.querySelectorAll<HTMLSelectElement>('select');
+			if (selectElements && selectElements.length > 0 && !cartState.selectedSize) {
 				alert('Please select a size before adding to cart.');
 				return;
 			}
@@ -121,13 +138,13 @@ export function createAddToCartHandler(productId, productData, cartState) {
 }
 
 // Select element handlers
-export function createSelectHandlers(productId, cartState) {
-	function handleSelectClick(e) {
+export function createSelectHandlers(productId: string, cartState: CartState): SelectHandlers {
+	function handleSelectClick(e: Event) {
 		e.stopPropagation();
 	}
 
-	function handleSizeChange(e) {
-		cartState.setSelectedSize(e.target.value);
+	function handleSizeChange(e: Event) {
+		cartState.setSelectedSize((e.target as HTMLSelectElement).value);
 	}
 
 	function setupSelectListeners() {
@@ -136,7 +153,7 @@ export function createSelectHandlers(productId, cartState) {
 		const productCard = document.querySelector(`.product-card.product-id-${productId}`);
 		if (!productCard) return;
 
-		const selectElements = productCard.querySelectorAll('select');
+		const selectElements = productCard.querySelectorAll<HTMLSelectElement>('select');
 		selectElements.forEach((select) => {
 			select.removeEventListener('click', handleSelectClick);
 			select.removeEventListener('mousedown', handleSelectClick);
@@ -160,7 +177,7 @@ export function createSelectHandlers(productId, cartState) {
 		const productCard = document.querySelector(`.product-card.product-id-${productId}`);
 		if (!productCard) return;
 
-		const selectElements = productCard.querySelectorAll('select');
+		const selectElements = productCard.querySelectorAll<HTMLSelectElement>('select');
 		selectElements.forEach((select) => {
 			select.removeEventListener('click', handleSelectClick);
 			select.removeEventListener('mousedown', handleSelectClick);
@@ -175,8 +192,8 @@ export function createSelectHandlers(productId, cartState) {
 }
 
 // Accessibility and UI utilities
-export function createAccessibilityHelpers() {
-	function createScreenReaderAnnouncement(text) {
+export function createAccessibilityHelpers(): AccessibilityHelpers {
+	function createScreenReaderAnnouncement(text: string) {
 		const announcement = document.createElement('div');
 		announcement.setAttribute('aria-live', 'polite');
 		announcement.setAttribute('aria-atomic', 'true');
@@ -201,7 +218,7 @@ export function createAccessibilityHelpers() {
 	}
 
 	function hideNavElements() {
-		const navElements = document.querySelectorAll('nav, header, .navbar');
+		const navElements = document.querySelectorAll<HTMLElement>('nav, header, .navbar');
 		for (let i = 0; i < navElements.length; i++) {
 			const el = navElements[i];
 			if (window.innerWidth <= 768) {
@@ -213,7 +230,7 @@ export function createAccessibilityHelpers() {
 	}
 
 	function showNavElements() {
-		const navElements = document.querySelectorAll('nav, header, .navbar');
+		const navElements = document.querySelectorAll<HTMLElement>('nav, header, .navbar');
 		navElements.forEach((el) => {
 			el.style.removeProperty('z-index');
 			el.style.removeProperty('opacity');
@@ -221,11 +238,16 @@ export function createAccessibilityHelpers() {
 		});
 	}
 
-	function hideOtherProducts(productId, context, isFirefox, supportsViewTransitions) {
+	function hideOtherProducts(
+		productId: string,
+		context: string,
+		isFirefox: boolean,
+		supportsViewTransitions: boolean
+	) {
 		const otherProducts =
 			isFirefox || !supportsViewTransitions
-				? document.querySelectorAll(`.product-card:not(.product-id-${productId})`)
-				: document.querySelectorAll(
+				? document.querySelectorAll<HTMLElement>(`.product-card:not(.product-id-${productId})`)
+				: document.querySelectorAll<HTMLElement>(
 						`.product-card:not([style*="view-transition-name: ${context}-product-card-${productId}"])`
 					);
 
@@ -234,21 +256,26 @@ export function createAccessibilityHelpers() {
 			product.style.opacity = '0';
 		});
 
-		const footer = document.querySelector('footer');
+		const footer = document.querySelector<HTMLElement>('footer');
 		if (footer) {
 			footer.style.visibility = 'hidden';
 			footer.style.opacity = '0';
 		}
 	}
 
-	function showOtherProducts(productId, context, isFirefox, supportsViewTransitions) {
+	function showOtherProducts(
+		productId: string,
+		context: string,
+		isFirefox: boolean,
+		supportsViewTransitions: boolean
+	) {
 		const otherProducts =
 			isFirefox || !supportsViewTransitions
-				? document.querySelectorAll(`.product-card:not(.product-id-${productId})`)
-				: document.querySelectorAll(
+				? document.querySelectorAll<HTMLElement>(`.product-card:not(.product-id-${productId})`)
+				: document.querySelectorAll<HTMLElement>(
 						`.product-card:not([style*="view-transition-name: ${context}-product-card-${productId}"])`
 					);
-		const footer = document.querySelector('footer');
+		const footer = document.querySelector<HTMLElement>('footer');
 
 		otherProducts.forEach((product) => {
 			product.style.removeProperty('visibility');
@@ -273,8 +300,14 @@ export function createAccessibilityHelpers() {
 }
 
 // Dropdown state management
-export function createDropdownHandlers() {
-	function handleDropdownState(isOpen, productId, isEnlarged, isFirefox, supportsViewTransitions) {
+export function createDropdownHandlers(): DropdownHandlers {
+	function handleDropdownState(
+		isOpen: boolean,
+		productId: string,
+		isEnlarged: boolean,
+		isFirefox: boolean,
+		supportsViewTransitions: boolean
+	) {
 		if (!isOpen && !isEnlarged) {
 			const { showOtherProducts } = createAccessibilityHelpers();
 			showOtherProducts(productId, 'default', isFirefox, supportsViewTransitions);

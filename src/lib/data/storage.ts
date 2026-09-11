@@ -1,14 +1,15 @@
 import fs from 'fs/promises';
 import path from 'path';
+import type { Post, PostData, UpdatePostData } from '$lib/types';
 
 const POSTS_FILE = path.resolve('src/lib/data/posts.json');
 
 // Global state for posts storage
-let postsCache = null;
-let isFileSystemWritable = null;
+let postsCache: Post[] | null = null;
+let isFileSystemWritable: boolean | null = null;
 
 // Test if file system is writable (for production vs development detection)
-async function testFileSystemWritable() {
+async function testFileSystemWritable(): Promise<boolean> {
 	if (isFileSystemWritable !== null) return isFileSystemWritable;
 
 	try {
@@ -24,13 +25,13 @@ async function testFileSystemWritable() {
 }
 
 // Load initial posts data
-async function loadInitialPosts() {
+async function loadInitialPosts(): Promise<Post[]> {
 	if (postsCache !== null) return postsCache;
 
 	try {
 		// Try to read from posts.json file first
 		const data = await fs.readFile(POSTS_FILE, 'utf-8');
-		postsCache = JSON.parse(data);
+		postsCache = JSON.parse(data) as Post[];
 	} catch {
 		// If file doesn't exist or can't be read, use default posts
 		postsCache = [
@@ -48,7 +49,7 @@ async function loadInitialPosts() {
 }
 
 // Save posts to file if possible, otherwise keep in memory
-async function savePosts(posts) {
+async function savePosts(posts: Post[]): Promise<void> {
 	postsCache = posts;
 
 	const canWrite = await testFileSystemWritable();
@@ -56,18 +57,21 @@ async function savePosts(posts) {
 		try {
 			await fs.writeFile(POSTS_FILE, JSON.stringify(posts, null, 2));
 		} catch (error) {
-			console.warn('Failed to write posts to file, using in-memory storage:', error.message);
+			console.warn(
+				'Failed to write posts to file, using in-memory storage:',
+				error instanceof Error ? error.message : error
+			);
 		}
 	}
 }
 
 // Get all posts
-export async function getPosts() {
+export async function getPosts(): Promise<Post[]> {
 	return await loadInitialPosts();
 }
 
 // Get a single post by ID
-export async function getPostById(id) {
+export async function getPostById(id: string | number): Promise<Post> {
 	const posts = await getPosts();
 	const post = posts.find((p) => p.id === Number(id));
 
@@ -77,11 +81,11 @@ export async function getPostById(id) {
 }
 
 // Create a new post
-export async function createPost(post) {
+export async function createPost(post: PostData): Promise<Post> {
 	const posts = await getPosts();
 	// Generate a proper ID based on the highest existing ID + 1
 	const maxId = posts.length > 0 ? Math.max(...posts.map((p) => p.id || 0)) : 0;
-	const newPost = {
+	const newPost: Post = {
 		id: maxId + 1,
 		...post,
 		createdAt: new Date().toISOString(),
@@ -95,7 +99,7 @@ export async function createPost(post) {
 }
 
 // Update an existing post
-export async function updatePost(id, postData) {
+export async function updatePost(id: string | number, postData: UpdatePostData): Promise<Post> {
 	const posts = await getPosts();
 	const index = posts.findIndex((p) => p.id === Number(id));
 
@@ -115,7 +119,7 @@ export async function updatePost(id, postData) {
 }
 
 // Delete a post
-export async function deletePost(id) {
+export async function deletePost(id: string | number): Promise<void> {
 	const posts = await getPosts();
 	const filteredPosts = posts.filter((p) => p.id !== Number(id));
 

@@ -1,5 +1,3 @@
-<script></script>
-
 <a class="skip-link" href="#main-content"
 	>Skip to Main <span class="visually-hidden">content</span></a
 >

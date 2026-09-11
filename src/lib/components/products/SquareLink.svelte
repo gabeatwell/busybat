@@ -1,5 +1,5 @@
-<script>
-	let { href = 'https://busybatsewing.com' } = $props();
+<script lang="ts">
+	let { href = 'https://busybatsewing.com' }: { href?: string } = $props();
 </script>
 
 <a {href} target="_blank" rel="noopener noreferrer" class="square-link">

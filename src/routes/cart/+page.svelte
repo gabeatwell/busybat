@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import SEO from '$lib/data/SEO.svelte';
 	import {
 		getCartData,
@@ -6,6 +6,8 @@
 		updateQuantity,
 		handleCheckout
 	} from '$lib/components/products/CartStore.svelte';
+	import type { CartItem } from '$lib/types';
+
 	// Get reactive cart data from the store - use the actual state references
 	let cartData = $derived(getCartData());
 	let cart = $derived(cartData.cart);
@@ -13,19 +15,19 @@
 	let isProcessingPayment = $derived(cartData.isProcessingPayment);
 	// Calculate cart total reactively
 	let cartTotal = $derived(
-		cart.reduce((sum, item) => {
-			const price = parseFloat(item.price) || 0;
-			const quantity = parseInt(item.quantity, 10) || 0;
+		cart.reduce((sum: number, item: CartItem) => {
+			const price = item.price ?? 0;
+			const quantity = item.quantity;
 			return sum + price * quantity + 10; // Adding $10 shipping per item
 		}, 0)
 	);
 
 	// Handlers for cart actions
-	function handleRemoveItem(id, size = null) {
+	function handleRemoveItem(id: string, size: string | null = null) {
 		removeFromCart(id, size);
 	}
 
-	function handleUpdateQuantity(id, newQuantity, size = null) {
+	function handleUpdateQuantity(id: string, newQuantity: number, size: string | null = null) {
 		updateQuantity(id, newQuantity, size);
 	}
 </script>
@@ -66,7 +68,7 @@
 						{/if}
 						<div class="item-price">
 							<span class="label">Price:</span>
-							<span class="value">${item.price.toFixed(2)}</span>
+							<span class="value">${(item.price ?? 0).toFixed(2)}</span>
 						</div>
 						<div class="item-price">
 							<span class="label">Shipping:</span>
@@ -82,7 +84,7 @@
 
 					<div class="item-total">
 						<span class="label">Total:</span>
-						<p>${(item.price * item.quantity + 10).toFixed(2)}</p>
+						<p>${((item.price ?? 0) * item.quantity + 10).toFixed(2)}</p>
 					</div>
 				</div>
 			{/each}

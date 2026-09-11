@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	let {
 		imageUrl,
 		name,
@@ -9,6 +9,16 @@
 		category,
 		supportsViewTransitions,
 		isFirefox
+	}: {
+		imageUrl: string;
+		name: string;
+		inStock: boolean;
+		context: string;
+		id: string;
+		imageFit?: string;
+		category?: string;
+		supportsViewTransitions: boolean;
+		isFirefox: boolean;
 	} = $props();
 
 	const useContainFit = imageFit === 'contain' || category === 'Bags' || category === 'Clothing';

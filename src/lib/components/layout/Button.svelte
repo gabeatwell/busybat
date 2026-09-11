@@ -1,8 +1,15 @@
-<script>
+<script lang="ts">
 	import { browser } from '$app/environment';
-	import { goto } from '$app/navigation';
 
-	let { title, href, newTab = false } = $props();
+	let {
+		title,
+		href,
+		newTab = false
+	}: {
+		title: string;
+		href: string;
+		newTab?: boolean;
+	} = $props();
 
 	function handleClick() {
 		if (browser) {

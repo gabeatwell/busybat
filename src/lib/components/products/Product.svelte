@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { browser } from '$app/environment';
 	import {
 		createToggleDropdownHandler,
@@ -6,20 +6,21 @@
 		createHandleDropdownState,
 		createDropdownHandlers,
 		trapFocus
-	} from './productFunctions.svelte.js';
+	} from './productFunctions.svelte';
 	import {
 		createBrowserDetection,
 		createCartState,
 		createAddToCartHandler,
 		createSelectHandlers,
 		createAccessibilityHelpers
-	} from './uiFunctions.svelte.js';
+	} from './uiFunctions.svelte';
 	import ProductDropdown from './ProductDropdown.svelte';
 	import ProductImage from './ProductImage.svelte';
 	import ProductInfo from './ProductInfo.svelte';
 	// import ProductActions from './ProductActions.svelte';
 	import SquareLink from './SquareLink.svelte';
 	import ProductOverlay from './ProductOverlay.svelte';
+	import type { AddToCartFn, AddToCartHandler } from '$lib/types';
 
 	let {
 		id,
@@ -37,6 +38,22 @@
 		imageFit = 'cover',
 		addToCart,
 		style = ''
+	}: {
+		id: string;
+		name: string;
+		price: number;
+		description: string;
+		imageUrl: string;
+		rating?: number;
+		inStock: boolean;
+		context?: string;
+		productUrl: string;
+		dropdown?: string;
+		dropdownImage?: string;
+		category?: string;
+		imageFit?: string;
+		addToCart?: AddToCartFn;
+		style?: string;
 	} = $props();
 
 	// State variables
@@ -63,27 +80,28 @@
 		quantity: 1,
 		...(cartState.selectedSize && { size: cartState.selectedSize })
 	});
-	let addToCartHandler = $state(null);
+	let addToCartHandler = $state<AddToCartHandler | null>(null);
 
 	const selectHandlers = createSelectHandlers(id, cartState);
 	const accessibilityHelpers = createAccessibilityHelpers();
 	const dropdownHandlers = createDropdownHandlers();
 
-	async function handleAddToCart(e) {
+	async function handleAddToCart(e: MouseEvent) {
 		if (addToCartHandler) {
-			await addToCartHandler.handleAddToCart(e, addToCart, toggleEnlargement);
+			await addToCartHandler.handleAddToCart(e, addToCart ?? (() => {}), toggleEnlargement);
 		}
 	}
 
 	const toggleDropdown = createToggleDropdownHandler({
-		isDropdownOpen: (val) => (val !== undefined ? (isDropdownOpen = val) : isDropdownOpen),
+		isDropdownOpen: (val?: boolean) =>
+			val !== undefined ? (isDropdownOpen = val) : isDropdownOpen,
 		id: () => id
 	});
 
 	const toggleEnlargement = createToggleEnlargementHandler(
 		{ id, context },
 		{
-			isEnlarged: (val) => {
+			isEnlarged: (val?: boolean) => {
 				if (val !== undefined) {
 					isTransitioning = true;
 					isEnlarged = val;
@@ -97,7 +115,9 @@
 						() => {
 							isTransitioning = false;
 							if (isEnlarged) {
-								const productInfo = document.querySelector('.product-card.enlarged .product-info');
+								const productInfo = document.querySelector<HTMLElement>(
+									'.product-card.enlarged .product-info'
+								);
 								if (productInfo) {
 									productInfo.scrollTop = 0;
 								}
@@ -108,12 +128,13 @@
 				}
 				return isEnlarged;
 			},
-			isDropdownOpen: (val) => (val !== undefined ? (isDropdownOpen = val) : isDropdownOpen)
+			isDropdownOpen: (val?: boolean) =>
+				val !== undefined ? (isDropdownOpen = val) : isDropdownOpen
 		}
 	);
 
 	let handleDropdownState = $derived(() => {
-		return (isOpen) => {
+		return (isOpen: boolean) => {
 			dropdownHandlers.handleDropdownState(
 				isOpen,
 				id,
@@ -143,15 +164,19 @@
 			document.body.classList.add('product-enlarged');
 
 			// Add global escape key listener
-			function handleGlobalKeydown(e) {
+			function handleGlobalKeydown(e: KeyboardEvent) {
 				if (e.key === 'Escape' && isEnlarged) {
 					e.preventDefault();
 					toggleEnlargement();
 				}
 			}
 			// Mobile-specific: Close on background tap
-			function handleBackgroundTouch(e) {
-				if (e.target.classList.contains('product-overlay') && isEnlarged) {
+			function handleBackgroundTouch(e: MouseEvent) {
+				if (
+					e.target instanceof HTMLElement &&
+					e.target.classList.contains('product-overlay') &&
+					isEnlarged
+				) {
 					toggleEnlargement();
 				}
 			}
@@ -172,7 +197,7 @@
 
 			// Handle select elements and scroll to top
 			setTimeout(() => {
-				const card = document.querySelector('.product-card.enlarged');
+				const card = document.querySelector<HTMLElement>('.product-card.enlarged');
 				if (card) {
 					trapFocus(card);
 					card.style.zIndex = '10';
@@ -207,13 +232,13 @@
 
 			document.body.classList.remove('product-enlarged');
 
-			const card = document.querySelector(`.product-card.product-id-${id}`);
+			const card = document.querySelector<HTMLElement>(`.product-card.product-id-${id}`);
 			if (card) {
 				card.style.removeProperty('z-index');
 				card.style.removeProperty('position');
 			}
 
-			const enlargedCard = document.querySelector('.product-card.enlarged');
+			const enlargedCard = document.querySelector<HTMLElement>('.product-card.enlarged');
 			if (enlargedCard) {
 				enlargedCard.style.removeProperty('z-index');
 			}

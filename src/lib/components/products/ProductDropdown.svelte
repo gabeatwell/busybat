@@ -1,5 +1,19 @@
-<script>
-	let { id, name, isEnlarged, onClose, onStateChange, dropdownImage = null } = $props();
+<script lang="ts">
+	let {
+		id,
+		name,
+		isEnlarged,
+		onClose,
+		onStateChange,
+		dropdownImage = null
+	}: {
+		id: string;
+		name: string;
+		isEnlarged: boolean;
+		onClose?: () => void;
+		onStateChange?: (isOpen: boolean) => void;
+		dropdownImage?: string | null;
+	} = $props();
 	let isDropdownOpen = $state(false);
 
 	const actualDropdownImage = dropdownImage;
@@ -8,7 +22,7 @@
 		onStateChange?.(isDropdownOpen);
 		// Only control visibility when the product is enlarged
 		if (isEnlarged) {
-			const otherProducts = document.querySelectorAll(
+			const otherProducts = document.querySelectorAll<HTMLElement>(
 				`.product-card:not([style*="view-transition-name: products-page-product-card-${id}"])`
 			);
 			if (isDropdownOpen) {
@@ -20,12 +34,12 @@
 		}
 	});
 
-	function toggleDropdown(e) {
+	function toggleDropdown(e?: MouseEvent | KeyboardEvent) {
 		e?.stopPropagation();
 		isDropdownOpen = !isDropdownOpen;
 	}
 
-	function handleKeydown(e) {
+	function handleKeydown(e: KeyboardEvent) {
 		if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
 			e.preventDefault();
 			e.stopPropagation();

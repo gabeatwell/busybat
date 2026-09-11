@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import {
 		getCartData,
 		handleCheckout,
@@ -28,7 +28,7 @@
 				<div class="cart-item">
 					<div class="item-details">
 						<h3>{item.name}</h3>
-						<p>${item.price.toFixed(2)}</p>
+						<p>${(item.price ?? 0).toFixed(2)}</p>
 					</div>
 					<div class="quantity-controls">
 						<button onclick={() => updateQuantity(item.id, item.quantity - 1)}>-</button>
@@ -48,7 +48,7 @@
 					type="email"
 					placeholder="Your email"
 					value={customerEmail}
-					onchange={(e) => setEmail(e.target.value)}
+					onchange={(e) => setEmail((e.target as HTMLInputElement).value)}
 					required
 				/>
 
