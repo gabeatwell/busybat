@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import Title from '$lib/components/layout/Title.svelte';
-	import logo from '$lib/assets/logo.webp';
+	// import logo from '$lib/assets/logo.webp';
 	import pinkLeo from '$lib/assets/pink-leo.webp';
 	import NavLink from '$lib/components/navigation/NavLink.svelte';
-	import CartIcon from '$lib/components/products/CartIcon.svelte';
+	// import CartIcon from '$lib/components/products/CartIcon.svelte';
 
 	let isOpen = $state(false);
 
@@ -289,30 +289,7 @@
 						opacity: 1;
 						transform: translateX(0);
 						pointer-events: all;
-
-						&:nth-child(1) {
-							transition-delay: 0.4s;
-						}
-
-						&:nth-child(2) {
-							transition-delay: 0.5s;
-						}
-
-						&:nth-child(3) {
-							transition-delay: 0.6s;
-						}
-
-						&:nth-child(4) {
-							transition-delay: 0.7s;
-						}
-
-						&:nth-child(5) {
-							transition-delay: 0.8s;
-						}
-
-						&:nth-child(6) {
-							transition-delay: 0.9s;
-						}
+						transition-delay: calc(((sibling-index() - 1) * 400ms));
 
 						/* &.mobile-cart {
 							display: flex;
