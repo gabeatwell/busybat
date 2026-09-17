@@ -1,6 +1,8 @@
 <script>
 	import PhotoGallery from '$lib/components/gallery/PhotoGallery.svelte';
 	import SEO from '$lib/data/SEO.svelte';
+
+	let { data } = $props();
 </script>
 
 <SEO
@@ -9,4 +11,4 @@
 	keywords="product gallery, photo gallery, handmade clothing, alternative fashion, busy little bat sewing gallery"
 />
 
-<PhotoGallery />
+<PhotoGallery images={data.images} />

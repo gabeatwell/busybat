@@ -3,15 +3,14 @@
 	import { onMount } from 'svelte';
 	import SEO from '$lib/data/SEO.svelte';
 	import VerticalTitle from '$lib/components/layout/VerticalTitle.svelte';
-	import pink from '$lib/assets/pink-leo.webp';
 	import Product from '$lib/components/products/Product.svelte';
-	import productsData from '$lib/components/products/productList.json';
 	import ProductFilter from '$lib/components/products/ProductFilter.svelte';
 	import { addToCart } from '$lib/components/products/CartStore.svelte';
 	import type { Product as ProductType } from '$lib/types';
+	import type { PageData } from './$types';
 
-	const products = productsData as unknown as ProductType[];
-
+	let { data }: { data: PageData & { products: ProductType[] } } = $props();
+	const products = $derived(data.products satisfies ProductType[]);
 	let selectedCategory = $state('All');
 	let supportsViewTransitions = $state(false);
 	let isFirefox = $state(false);

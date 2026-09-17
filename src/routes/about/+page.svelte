@@ -1,8 +1,10 @@
-<script>
+<script lang="ts">
 	import SEO from '$lib/data/SEO.svelte';
 	import VerticalTitle from '$lib/components/layout/VerticalTitle.svelte';
-	import Image from '$lib/components/layout/Image.svelte';
 	import Button from '$lib/components/layout/Button.svelte';
+	import { PortableText } from '@portabletext/svelte';
+
+	let { data } = $props();
 </script>
 
 <SEO
@@ -22,35 +24,41 @@
 		<h2>where dark meets delightful in every stitch</h2>
 
 		<article class="summary">
-			<p class="width indent">
-				I am a bewitchingly uncommon spirit with a haunting passion for arts and sewing. My name is
-				Adrienne and I am the busiest of all bats. With a background steeped in the mysteries of
-				sewing, design, and art. I strive to bring the hauntingly beautiful to everything I create.
-			</p>
+			{#if data.about?.body}
+				<PortableText value={data.about.body} />
+			{:else}
+				<p class="width indent">
+					I am a bewitchingly uncommon spirit with a haunting passion for arts and sewing. My name
+					is Adrienne and I am the busiest of all bats. With a background steeped in the mysteries
+					of sewing, design, and art. I strive to bring the hauntingly beautiful to everything I
+					create.
+				</p>
 
-			<p class="width indent">
-				My journey began many dark nights ago with a passion for art, music, and quite frankly,
-				clothes that actually fit. As a self-trained sewist, I unearthed my passion for creating
-				unique items that fit my goth/punk aesthetic. Over the years, I have sharpened my skills
-				like a finely honed blade, gaining invaluable experience through various ghostly projects
-				and eerie collaborations. Each step along the way has transformed me into the ghoul that I
-				am today.
-			</p>
+				<p class="width indent">
+					My journey began many dark nights ago with a passion for art, music, and quite frankly,
+					clothes that actually fit. As a self-trained sewist, I unearthed my passion for creating
+					unique items that fit my goth/punk aesthetic. Over the years, I have sharpened my skills
+					like a finely honed blade, gaining invaluable experience through various ghostly projects
+					and eerie collaborations. Each step along the way has transformed me into the ghoul that I
+					am today.
+				</p>
 
-			<p class="width indent">
-				I specialize in upcycling old denim, flannels and t-shirts into items for those who dare to
-				stand out. Each stitch weaves a web of gothic glamour, gutter-punk horror and eerie every
-				day wear. My creations are made with a touch of magic and a whole lot of love. I create
-				sustainable, wearable art that blends the macabre with sustainability proving that fashion
-				can be both distinctive and kind to the planet. I believe that each ghastly creature on this
-				planet has the power to change lives and bring about unsettlingly meaningful change.
-			</p>
-			<p class="width indent">
-				Do you hear the whispers of the night calling? Whether you seek a custom creation, have a
-				question from beyond, or simply wish to share your love for the eerie and elegant, I am but
-				a message away. I welcome all kindred spirits, fellow night dwellers, and lovers of the
-				beautifully macabre.
-			</p>
+				<p class="width indent">
+					I specialize in upcycling old denim, flannels and t-shirts into items for those who dare
+					to stand out. Each stitch weaves a web of gothic glamour, gutter-punk horror and eerie
+					every day wear. My creations are made with a touch of magic and a whole lot of love. I
+					create sustainable, wearable art that blends the macabre with sustainability proving that
+					fashion can be both distinctive and kind to the planet. I believe that each ghastly
+					creature on this planet has the power to change lives and bring about unsettlingly
+					meaningful change.
+				</p>
+				<p class="width indent">
+					Do you hear the whispers of the night calling? Whether you seek a custom creation, have a
+					question from beyond, or simply wish to share your love for the eerie and elegant, I am
+					but a message away. I welcome all kindred spirits, fellow night dwellers, and lovers of
+					the beautifully macabre.
+				</p>
+			{/if}
 
 			<div class="contact-me">
 				<p class="width"><span>📜</span> Send a Raven (or email):</p>

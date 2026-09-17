@@ -5,33 +5,9 @@
 	import type { Post } from '$lib/types';
 
 	let { data } = $props();
-	let posts = $state<Post[]>([]);
-	let loading = $state(true);
-	let error = $state<string | null>(null);
+	const posts = $derived(data.posts satisfies Post[]);
 	let expandedPosts = $state(new Set<string | number>());
 
-	$effect(() => {
-		loadPosts();
-	});
-
-	async function loadPosts() {
-		loading = true;
-		error = null;
-		try {
-			const res = await fetch('/api/posts');
-			if (!res.ok) {
-				throw new Error('Failed to load posts');
-			}
-			posts = await res.json();
-		} catch (err) {
-			error = err instanceof Error ? err.message : 'Unknown error';
-			console.error('Failed to load posts:', err);
-		} finally {
-			loading = false;
-		}
-	}
-
-	// Simplified mobile-friendly click handler
 	function handleExpandToggle(postId: string | number) {
 		if (expandedPosts.has(postId)) {
 			expandedPosts.delete(postId);
@@ -70,17 +46,7 @@
 		<p>Stay up to date with our latest news and insights</p>
 	</header>
 
-	{#if loading}
-		<div class="loading" role="status" aria-live="polite">
-			<p>Loading posts...</p>
-		</div>
-	{:else if error}
-		<div class="error" role="alert" aria-live="assertive">
-			<p>Failed to load posts: {error}</p>
-
-			<button onclick={loadPosts} aria-label="Retry loading blog posts">Try Again</button>
-		</div>
-	{:else if posts.length === 0}
+	{#if posts.length === 0}
 		<div class="no-posts">
 			<p>No blog posts available yet. Check back soon!</p>
 		</div>
@@ -200,8 +166,6 @@
 			}
 		}
 
-		& .loading,
-		& .error,
 		& .no-posts {
 			text-align: center;
 			padding: 3rem;
@@ -209,33 +173,7 @@
 			font-size: clamp(var(--sm), 2vw, var(--h5));
 			font-weight: 500;
 		}
-		& .error {
-			color: var(--color-danger);
 
-			& button {
-				margin-top: 1rem;
-				padding: 0.5rem 1rem;
-				background: var(--color-info);
-				color: var(--color-secondary);
-				border: none;
-				border-radius: 4px;
-				cursor: pointer;
-
-				&:hover {
-					background: var(--color-primary);
-				}
-
-				&:focus {
-					outline: none;
-					box-shadow: 0 0 0 2px var(--color-accent);
-				}
-
-				&:focus-visible {
-					outline: 2px solid var(--color-accent);
-					outline-offset: 2px;
-				}
-			}
-		}
 		& .posts-grid {
 			display: grid;
 			gap: 2rem;

@@ -1,15 +1,13 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import ViewTransition from '$lib/components/layout/ViewTransition.svelte';
 	import VerticalTitle from '$lib/components/layout/VerticalTitle.svelte';
-	import galleryImages from './photoGallery.json';
 	import type { GalleryImage } from '$lib/types';
+	import galleryImages from './photoGallery.json';
 
+	let { images: sanityImages = [] }: { images: GalleryImage[] } = $props();
+	const images = $derived(sanityImages.length ? sanityImages : (galleryImages as GalleryImage[]));
 	let currentSlide = $state(0);
 	let supportsViewTransitions = $state(false);
-
-	// gallery images
-	const images: GalleryImage[] = galleryImages as GalleryImage[];
 
 	// Function to handle slide change
 	function changeSlide(index: number) {
