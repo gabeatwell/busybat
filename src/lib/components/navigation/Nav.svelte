@@ -88,6 +88,7 @@
 		border-radius: 0;
 		width: 100%;
 		height: 3em;
+		height: auto;
 		box-shadow: 0 0 4px var(--color-gray);
 		z-index: 7;
 		margin-inline: auto;

@@ -126,6 +126,7 @@
 				font-size: clamp(var(--h6), 5vw, var(--h5));
 				font-weight: 200;
 				margin: 0;
+				margin-bottom: 0.5rem;
 				padding: 0;
 				color: var(--color-secondary);
 				width: 75%;

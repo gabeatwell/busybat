@@ -242,7 +242,14 @@
 
 				& .post-header-content {
 					flex: 1;
-					min-width: 0; /* Allows content to shrink properly */
+					min-width: 0;
+
+					& .post-meta {
+						margin-top: -1rem;
+						font-style: italic;
+						font-weight: 200;
+						opacity: 0.75;
+					}
 				}
 
 				@media (width <= 768px) {
