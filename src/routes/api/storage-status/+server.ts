@@ -1,7 +1,10 @@
+import CloudflareKV from 'remote-cloudflare-kv';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async () => {
-	const hasKVEnvVars = process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN;
+	const hasKVEnvVars = Boolean(
+		process.env.CF_ACCOUNT_ID && process.env.CF_NAMESPACE_ID && process.env.CF_API_TOKEN
+	);
 	let isDatabaseConnected = false;
 	let statusMessage = '';
 
@@ -10,11 +13,15 @@ export const GET: RequestHandler = async () => {
 		statusMessage = 'In-memory storage (posts persist only during session)';
 	} else {
 		try {
-			// Test if we can connect to Vercel KV
-			const { kv } = await import('@vercel/kv');
-			await kv.ping();
+			// Test if we can connect to Cloudflare KV
+			const kv = new CloudflareKV({
+				account_id: process.env.CF_ACCOUNT_ID!,
+				namespace_id: process.env.CF_NAMESPACE_ID!,
+				api_token: process.env.CF_API_TOKEN!
+			});
+			await kv.list({ prefix: 'blog_posts', limit: 1 });
 			isDatabaseConnected = true;
-			statusMessage = 'Database storage (Vercel KV - changes persist across devices)';
+			statusMessage = 'Database storage (Cloudflare KV - changes persist across devices)';
 		} catch {
 			isDatabaseConnected = false;
 			statusMessage = 'Database connection failed (using in-memory storage)';

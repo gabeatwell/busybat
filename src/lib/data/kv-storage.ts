@@ -1,32 +1,33 @@
-import { kv } from '@vercel/kv';
+import CloudflareKV from 'remote-cloudflare-kv';
 import fs from 'fs/promises';
 import path from 'path';
 import type { Post, PostData, UpdatePostData } from '$lib/types';
 
-// Check if KV environment variables are available
+// Cloudflare KV client (free, works from Vercel)
+const kv = new CloudflareKV({
+	account_id: process.env.CF_ACCOUNT_ID || '',
+	namespace_id: process.env.CF_NAMESPACE_ID || '',
+	api_token: process.env.CF_API_TOKEN || ''
+});
+
 const isKVAvailable = (): boolean => {
-	return Boolean(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
+	return Boolean(
+		process.env.CF_ACCOUNT_ID && process.env.CF_NAMESPACE_ID && process.env.CF_API_TOKEN
+	);
 };
 
-// Key for storing posts in KV
 const POSTS_KEY = 'blog_posts';
-const POSTS_INDEX_KEY = 'blog_posts_index'; // For storing the list of post IDs
+const POSTS_INDEX_KEY = 'blog_posts_index';
 
-// In-memory storage fallback for development
 let memoryPosts: Post[] | null = null;
+let DEFAULT_POSTS: Post[] | null = null;
 
-// Load default posts from posts.json file
 async function loadDefaultPosts(): Promise<Post[]> {
 	try {
 		const postsPath = path.resolve('src/lib/data/posts.json');
 		const data = await fs.readFile(postsPath, 'utf-8');
 		return JSON.parse(data) as Post[];
-	} catch (error) {
-		console.warn(
-			'Could not load posts.json, using fallback default posts:',
-			error instanceof Error ? error.message : error
-		);
-		// Fallback to hardcoded default if posts.json can't be read
+	} catch {
 		return [
 			{
 				id: 1,
@@ -39,94 +40,56 @@ async function loadDefaultPosts(): Promise<Post[]> {
 	}
 }
 
-// Cache for default posts
-let DEFAULT_POSTS: Post[] | null = null;
-
-// Get all posts
 export async function getPosts(): Promise<Post[]> {
-	if (!DEFAULT_POSTS) {
-		DEFAULT_POSTS = await loadDefaultPosts();
-	}
+	if (!DEFAULT_POSTS) DEFAULT_POSTS = await loadDefaultPosts();
 
 	if (!isKVAvailable()) {
-		// Use in-memory storage when KV is not available
-		if (!memoryPosts) {
-			memoryPosts = [...DEFAULT_POSTS];
-		}
+		if (!memoryPosts) memoryPosts = [...DEFAULT_POSTS];
 		return memoryPosts.sort(
 			(a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
 		);
 	}
 
 	try {
-		// Get the list of post IDs
-		const postIds = (await kv.get<number[]>(POSTS_INDEX_KEY)) ?? [];
-
-		if (postIds.length === 0) {
-			// Initialize with default posts
+		const postIds = (await kv.get(POSTS_INDEX_KEY, { type: 'json' })) as number[] | null;
+		if (!postIds || postIds.length === 0) {
 			await initializeDefaultPosts();
 			return DEFAULT_POSTS;
 		}
 
-		// Get all posts using the IDs
 		const posts: Post[] = [];
 		for (const id of postIds) {
-			const post = await kv.get<Post>(`${POSTS_KEY}:${id}`);
-			if (post) {
-				posts.push(post);
-			}
+			const post = (await kv.get(`${POSTS_KEY}:${id}`, { type: 'json' })) as Post | null;
+			if (post) posts.push(post);
 		}
 
-		// Sort by creation date (newest first)
 		return posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 	} catch (error) {
-		console.error('Error getting posts from KV:', error);
-		// Fallback to default posts if KV fails
+		console.error('Error getting posts from Cloudflare KV:', error);
 		return DEFAULT_POSTS;
 	}
 }
 
-// Get a single post by ID
 export async function getPostById(id: string | number): Promise<Post> {
-	if (!DEFAULT_POSTS) {
-		DEFAULT_POSTS = await loadDefaultPosts();
-	}
+	if (!DEFAULT_POSTS) DEFAULT_POSTS = await loadDefaultPosts();
 
 	if (!isKVAvailable()) {
-		// Use in-memory storage when KV is not available
-		if (!memoryPosts) {
-			memoryPosts = [...DEFAULT_POSTS];
-		}
+		if (!memoryPosts) memoryPosts = [...DEFAULT_POSTS];
 		const post = memoryPosts.find((p) => p.id === Number(id));
-		if (!post) {
-			throw new Error('Post not found');
-		}
+		if (!post) throw new Error('Post not found');
 		return post;
 	}
 
-	try {
-		const post = await kv.get<Post>(`${POSTS_KEY}:${id}`);
-		if (!post) {
-			throw new Error('Post not found');
-		}
-		return post;
-	} catch (error) {
-		console.error('Error getting post from KV:', error);
-		throw new Error('Post not found');
-	}
+	const post = (await kv.get(`${POSTS_KEY}:${id}`, { type: 'json' })) as Post | null;
+	if (!post) throw new Error('Post not found');
+	return post;
 }
 
-// Create a new post
 export async function createPost(postData: PostData): Promise<Post> {
-	if (!DEFAULT_POSTS) {
-		DEFAULT_POSTS = await loadDefaultPosts();
-	}
+	if (!DEFAULT_POSTS) DEFAULT_POSTS = await loadDefaultPosts();
 
 	if (!isKVAvailable()) {
-		// Use in-memory storage when KV is not available
-		if (!memoryPosts) {
-			memoryPosts = [...DEFAULT_POSTS];
-		}
+		if (!memoryPosts) memoryPosts = [...DEFAULT_POSTS];
 		const maxId = memoryPosts.length > 0 ? Math.max(...memoryPosts.map((p) => p.id)) : 0;
 		const newPost: Post = {
 			id: maxId + 1,
@@ -138,48 +101,30 @@ export async function createPost(postData: PostData): Promise<Post> {
 		return newPost;
 	}
 
-	try {
-		// Get current post IDs to generate new ID
-		const postIds = (await kv.get<number[]>(POSTS_INDEX_KEY)) ?? [];
-		const maxId = postIds.length > 0 ? Math.max(...postIds) : 0;
-		const newId = maxId + 1;
+	const postIds = ((await kv.get(POSTS_INDEX_KEY, { type: 'json' })) as number[]) ?? [];
+	const maxId = postIds.length > 0 ? Math.max(...postIds) : 0;
+	const newId = maxId + 1;
 
-		const newPost: Post = {
-			id: newId,
-			...postData,
-			createdAt: new Date().toISOString(),
-			updatedAt: new Date().toISOString()
-		};
+	const newPost: Post = {
+		id: newId,
+		...postData,
+		createdAt: new Date().toISOString(),
+		updatedAt: new Date().toISOString()
+	};
 
-		// Store the post
-		await kv.set(`${POSTS_KEY}:${newId}`, newPost);
+	await kv.put(`${POSTS_KEY}:${newId}`, JSON.stringify(newPost));
+	await kv.put(POSTS_INDEX_KEY, JSON.stringify([...postIds, newId]));
 
-		// Update the index
-		const updatedIds = [...postIds, newId];
-		await kv.set(POSTS_INDEX_KEY, updatedIds);
-
-		return newPost;
-	} catch (error) {
-		console.error('Error creating post in KV:', error);
-		throw new Error('Failed to create post');
-	}
+	return newPost;
 }
 
-// Update an existing post
 export async function updatePost(id: string | number, postData: UpdatePostData): Promise<Post> {
-	if (!DEFAULT_POSTS) {
-		DEFAULT_POSTS = await loadDefaultPosts();
-	}
+	if (!DEFAULT_POSTS) DEFAULT_POSTS = await loadDefaultPosts();
 
 	if (!isKVAvailable()) {
-		// Use in-memory storage when KV is not available
-		if (!memoryPosts) {
-			memoryPosts = [...DEFAULT_POSTS];
-		}
+		if (!memoryPosts) memoryPosts = [...DEFAULT_POSTS];
 		const index = memoryPosts.findIndex((p) => p.id === Number(id));
-		if (index === -1) {
-			throw new Error('Post not found');
-		}
+		if (index === -1) throw new Error('Post not found');
 		const updatedPost: Post = {
 			...memoryPosts[index],
 			...postData,
@@ -189,74 +134,44 @@ export async function updatePost(id: string | number, postData: UpdatePostData):
 		return updatedPost;
 	}
 
-	try {
-		const existingPost = await kv.get<Post>(`${POSTS_KEY}:${id}`);
-		if (!existingPost) {
-			throw new Error('Post not found');
-		}
+	const existing = (await kv.get(`${POSTS_KEY}:${id}`, { type: 'json' })) as Post | null;
+	if (!existing) throw new Error('Post not found');
 
-		const updatedPost: Post = {
-			...existingPost,
-			...postData,
-			updatedAt: new Date().toISOString()
-		};
+	const updatedPost: Post = {
+		...existing,
+		...postData,
+		updatedAt: new Date().toISOString()
+	};
 
-		await kv.set(`${POSTS_KEY}:${id}`, updatedPost);
-		return updatedPost;
-	} catch (error) {
-		console.error('Error updating post in KV:', error);
-		throw new Error('Failed to update post');
-	}
+	await kv.put(`${POSTS_KEY}:${id}`, JSON.stringify(updatedPost));
+	return updatedPost;
 }
 
-// Delete a post
 export async function deletePost(id: string | number): Promise<void> {
-	if (!DEFAULT_POSTS) {
-		DEFAULT_POSTS = await loadDefaultPosts();
-	}
+	if (!DEFAULT_POSTS) DEFAULT_POSTS = await loadDefaultPosts();
 
 	if (!isKVAvailable()) {
-		// Use in-memory storage when KV is not available
-		if (!memoryPosts) {
-			memoryPosts = [...DEFAULT_POSTS];
-		}
+		if (!memoryPosts) memoryPosts = [...DEFAULT_POSTS];
 		memoryPosts = memoryPosts.filter((p) => p.id !== Number(id));
 		return;
 	}
 
-	try {
-		// Remove the post
-		await kv.del(`${POSTS_KEY}:${id}`);
-
-		// Update the index
-		const postIds = (await kv.get<number[]>(POSTS_INDEX_KEY)) ?? [];
-		const updatedIds = postIds.filter((postId) => postId !== Number(id));
-		await kv.set(POSTS_INDEX_KEY, updatedIds);
-	} catch (error) {
-		console.error('Error deleting post from KV:', error);
-		throw new Error('Failed to delete post');
-	}
+	await kv.delete(`${POSTS_KEY}:${id}`);
+	const postIds = ((await kv.get(POSTS_INDEX_KEY, { type: 'json' })) as number[]) ?? [];
+	const updatedIds = postIds.filter((postId) => postId !== Number(id));
+	await kv.put(POSTS_INDEX_KEY, JSON.stringify(updatedIds));
 }
 
-// Initialize default posts (helper function)
 async function initializeDefaultPosts(): Promise<void> {
-	if (!DEFAULT_POSTS) {
-		DEFAULT_POSTS = await loadDefaultPosts();
+	if (!DEFAULT_POSTS) DEFAULT_POSTS = await loadDefaultPosts();
+	const postIds: number[] = [];
+	for (const post of DEFAULT_POSTS) {
+		await kv.put(`${POSTS_KEY}:${post.id}`, JSON.stringify(post));
+		postIds.push(post.id);
 	}
-
-	try {
-		const postIds: number[] = [];
-		for (const post of DEFAULT_POSTS) {
-			await kv.set(`${POSTS_KEY}:${post.id}`, post);
-			postIds.push(post.id);
-		}
-		await kv.set(POSTS_INDEX_KEY, postIds);
-	} catch (error) {
-		console.error('Error initializing default posts:', error);
-	}
+	await kv.put(POSTS_INDEX_KEY, JSON.stringify(postIds));
 }
 
-// Utility function to clear cache and reload default posts from file
 export async function reloadDefaultPosts(): Promise<Post[]> {
 	DEFAULT_POSTS = null;
 	memoryPosts = null;
@@ -264,7 +179,6 @@ export async function reloadDefaultPosts(): Promise<Post[]> {
 	return DEFAULT_POSTS;
 }
 
-// Utility function to clear all cache
 export async function clearCache(): Promise<void> {
 	DEFAULT_POSTS = null;
 	memoryPosts = null;

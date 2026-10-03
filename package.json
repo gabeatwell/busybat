@@ -47,9 +47,9 @@
 		"@sanity/sveltekit": "^2.1.0",
 		"@stripe/stripe-js": "^7.0.0",
 		"@vercel/blob": "^1.1.1",
-		"@vercel/kv": "^3.0.0",
 		"bcrypt": "^6.0.0",
 		"jsonwebtoken": "^9.0.2",
+		"remote-cloudflare-kv": "^1.0.1",
 		"sanity": "^6.15.0",
 		"stripe": "^18.0.0"
 	},
