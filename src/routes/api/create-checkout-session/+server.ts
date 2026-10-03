@@ -7,7 +7,7 @@ export const POST: RequestHandler = async ({ request, url }) => {
 	try {
 		console.log('Creating checkout session...');
 
-		const stripe = new Stripe(import.meta.env.VITE_STRIPE_SECRET_KEY);
+		const stripe = new Stripe(import.meta.env.STRIPE_SECRET_KEY);
 		const { items, customerEmail } = (await request.json()) as {
 			items: (CartItem & { stripe_price_id?: string; description?: string })[];
 			customerEmail?: string;
