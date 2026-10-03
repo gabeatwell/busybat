@@ -34,9 +34,9 @@
 <main class="blog-container">
 	<section class="admin" aria-label="Admin navigation">
 		{#if data.user}
-			<a href="/admin" aria-label="Go to admin dashboard">Admin Dashboard</a>
+			<a href="/studio" aria-label="Go to admin dashboard">Admin Dashboard</a>
 		{:else}
-			<a href="/login" aria-label="Go to admin login">Admin Login</a>
+			<a href="/login?next=/studio" aria-label="Sign in to manage blog posts">Admin Login</a>
 		{/if}
 	</section>
 

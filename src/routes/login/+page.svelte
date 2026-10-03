@@ -1,12 +1,13 @@
 <script lang="ts">
-	import SEO from '$lib/data/SEO.svelte';
 	import { goto } from '$app/navigation';
 	import VerticalTitle from '$lib/components/layout/VerticalTitle.svelte';
+	import { page } from '$app/state';
 
 	let username = $state('');
 	let password = $state('');
 	let error = $state('');
 	let loading = $state(false);
+
 	async function login() {
 		if (!username.trim() || !password.trim()) {
 			error = 'Please enter both username and password';
@@ -33,7 +34,10 @@
 
 			if (data.token) {
 				document.cookie = `token=${data.token}; path=/; max-age=3600`; // 1 hour
-				goto('/admin');
+
+				const raw = page.url.searchParams.get('next') ?? '/admin';
+				const next = raw.startsWith('/') && !raw.startsWith('//') ? raw : '/admin';
+				goto(next);
 			} else {
 				error = data.error || 'Invalid credentials';
 			}
