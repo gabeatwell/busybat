@@ -11,6 +11,7 @@ node_modules
 # OS
 .DS_Store
 Thumbs.db
+.github/*
 
 # Env
 .env
@@ -25,3 +26,5 @@ vite.config.ts.timestamp-*
 # Uploaded files
 static/uploads/*
 !static/uploads/.gitkeep
+
+.github/
