@@ -3,17 +3,16 @@ import fs from 'fs/promises';
 import path from 'path';
 import type { Post, PostData, UpdatePostData } from '$lib/types';
 
-// Cloudflare KV client (free, works from Vercel)
+import { env } from '$env/dynamic/private';
+
 const kv = new CloudflareKV({
-	account_id: process.env.CF_ACCOUNT_ID || '',
-	namespace_id: process.env.CF_NAMESPACE_ID || '',
-	api_token: process.env.CF_API_TOKEN || ''
+	account_id: env.CF_ACCOUNT_ID || '',
+	namespace_id: env.CF_NAMESPACE_ID || '',
+	api_token: env.CF_API_TOKEN || ''
 });
 
 const isKVAvailable = (): boolean => {
-	return Boolean(
-		process.env.CF_ACCOUNT_ID && process.env.CF_NAMESPACE_ID && process.env.CF_API_TOKEN
-	);
+	return Boolean(env.CF_ACCOUNT_ID && env.CF_NAMESPACE_ID && env.CF_API_TOKEN);
 };
 
 const POSTS_KEY = 'blog_posts';

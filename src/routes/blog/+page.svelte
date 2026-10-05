@@ -1,21 +1,10 @@
 <script lang="ts">
 	import SEO from '$lib/data/SEO.svelte';
 	import VerticalTitle from '$lib/components/layout/VerticalTitle.svelte';
-	import { slide } from 'svelte/transition';
 	import type { Post } from '$lib/types';
 
 	let { data } = $props();
 	const posts = $derived(data.posts satisfies Post[]);
-	let expandedPosts = $state(new Set<string | number>());
-
-	function handleExpandToggle(postId: string | number) {
-		if (expandedPosts.has(postId)) {
-			expandedPosts.delete(postId);
-		} else {
-			expandedPosts.add(postId);
-		}
-		expandedPosts = new Set(expandedPosts);
-	}
 </script>
 
 <svelte:head>
@@ -51,23 +40,14 @@
 			<p>No blog posts available yet. Check back soon!</p>
 		</div>
 	{:else}
-		<div class="posts-grid" role="main" aria-label="Blog posts">
+		<div class="posts-grid" aria-label="Blog posts">
 			{#each posts as post (post.id)}
-				<article class="post-card" aria-labelledby="post-title-{post.id}">
-					<button
-						class="post-card-button"
-						onclick={() => handleExpandToggle(post.id)}
-						onkeydown={(e) => {
-							if (e.key === 'Enter' || e.key === ' ') {
-								e.preventDefault();
-								handleExpandToggle(post.id);
-							}
-						}}
-					>
+				<details class="post-card" name="blog-posts">
+					<summary class="post-card-button">
 						<header class="post-header">
 							{#if post.image}
 								<div class="post-thumbnail">
-									<img src={post.image} alt="Thumbnail for {post.title}" />
+									<img src={post.image} alt={`Thumbnail for ${post.title}`} />
 								</div>
 							{/if}
 
@@ -87,26 +67,20 @@
 								</div>
 							</div>
 						</header>
-					</button>
-					{#if expandedPosts.has(post.id)}
-						<div
-							class="post-content"
-							id="post-content-{post.id}"
-							aria-labelledby="post-title-{post.id}"
-							transition:slide={{ duration: 500 }}
-						>
-							{#if post.image}
-								<div class="post-image">
-									<img src={post.image} alt="Featured image for {post.title}" />
-								</div>
-							{/if}
+					</summary>
 
-							<div class="post-text">
-								<p>{post.content}</p>
+					<div class="post-content" id="post-content-{post.id}">
+						{#if post.image}
+							<div class="post-image">
+								<img src={post.image} alt={`Image for ${post.title}`} />
 							</div>
+						{/if}
+
+						<div class="post-text">
+							<p>{post.content}</p>
 						</div>
-					{/if}
-				</article>
+					</div>
+				</details>
 			{/each}
 		</div>
 	{/if}
@@ -185,6 +159,7 @@
 				gap: 1rem;
 			}
 		}
+
 		& .post-card {
 			background: white;
 			border-radius: 12px;
@@ -195,9 +170,34 @@
 				transform 0.2s ease,
 				box-shadow 0.2s ease;
 
-			&:hover {
+			&:hover,
+			&[open] {
 				transform: translateY(-2px);
 				box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+			}
+
+			& :global(::details-content) {
+				block-size: 0;
+				overflow: clip;
+				transition:
+					block-size 0.35s ease,
+					content-visibility 0.35s allow-discrete,
+					opacity 0.25s ease;
+			}
+
+			&[open] :global(::details-content) {
+				block-size: auto;
+				opacity: 1;
+			}
+
+			& > summary {
+				list-style: none;
+
+				&::-webkit-details-marker,
+				&::marker {
+					content: '';
+					display: none;
+				}
 			}
 
 			& .post-card-button {
@@ -287,10 +287,11 @@
 					}
 				}
 			}
+
 			& .post-content {
 				padding: 1.5rem;
 				border-top: 2px solid #eee;
-				overflow-y: auto;
+				overflow-y: hidden;
 				background-color: #fafafa;
 				border-radius: 0 0 12px 12px;
 				position: relative;
@@ -308,12 +309,6 @@
 						border-radius: 8px;
 						box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 						border: 1px solid #ddd;
-					}
-
-					@media (width <= 768px) {
-						& img {
-							max-height: 200px;
-						}
 					}
 				}
 
