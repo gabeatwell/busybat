@@ -9,7 +9,7 @@
 		style="background-image: url({pinkLeo}); background-size: cover; background-position: center; background-attachment: fixed;"
 	>
 		<p>
-			&copy;
+			<span class="copy-sign">&copy;</span>
 			{year}
 
 			{name} All rights reserved
@@ -46,6 +46,7 @@
 			width: 100%;
 			display: flex;
 			justify-content: center;
+			align-items: baseline;
 
 			@media (width <= 768px) {
 				padding: 0.01rem;
@@ -70,6 +71,15 @@
 					display: flex;
 					justify-content: center;
 					text-align: center;
+				}
+
+				& .copy-sign {
+					block-size: 1cap;
+					line-height: 1;
+					display: inline-flex;
+					align-items: center;
+					justify-content: center;
+					transform: translateY(0.075em);
 				}
 			}
 		}

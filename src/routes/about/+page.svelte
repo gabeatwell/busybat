@@ -27,14 +27,14 @@
 			{#if data.about?.body}
 				<PortableText value={data.about.body} />
 			{:else}
-				<p class="width indent">
+				<p class="text indent">
 					I am a bewitchingly uncommon spirit with a haunting passion for arts and sewing. My name
 					is Adrienne and I am the busiest of all bats. With a background steeped in the mysteries
 					of sewing, design, and art. I strive to bring the hauntingly beautiful to everything I
 					create.
 				</p>
 
-				<p class="width indent">
+				<p class="text indent">
 					My journey began many dark nights ago with a passion for art, music, and quite frankly,
 					clothes that actually fit. As a self-trained sewist, I unearthed my passion for creating
 					unique items that fit my goth/punk aesthetic. Over the years, I have sharpened my skills
@@ -43,7 +43,7 @@
 					am today.
 				</p>
 
-				<p class="width indent">
+				<p class="text indent">
 					I specialize in upcycling old denim, flannels and t-shirts into items for those who dare
 					to stand out. Each stitch weaves a web of gothic glamour, gutter-punk horror and eerie
 					every day wear. My creations are made with a touch of magic and a whole lot of love. I
@@ -52,7 +52,7 @@
 					creature on this planet has the power to change lives and bring about unsettlingly
 					meaningful change.
 				</p>
-				<p class="width indent">
+				<p class="text indent">
 					Do you hear the whispers of the night calling? Whether you seek a custom creation, have a
 					question from beyond, or simply wish to share your love for the eerie and elegant, I am
 					but a message away. I welcome all kindred spirits, fellow night dwellers, and lovers of
@@ -61,13 +61,13 @@
 			{/if}
 
 			<div class="contact-me">
-				<p class="width"><span>📜</span> Send a Raven (or email):</p>
+				<p class="text">Send a Raven (or email):</p>
 
 				<Button title="Summon Me" href="/contact" />
 			</div>
 
 			<div class="contact-me">
-				<p class="width"><span>📲</span> Echoes in the Void:</p>
+				<p class="text">Echoes in the Void:</p>
 
 				<Button
 					title="Instagram"
@@ -195,17 +195,13 @@
 						padding: 0 0.5rem;
 					}
 
-					& p.width {
+					& p.text {
 						max-width: unset;
 						width: auto;
 						margin: 0;
 						white-space: nowrap;
 						flex-shrink: 0;
-
-						& span {
-							font-size: clamp(var(--sm), 4vw, var(--h1));
-							opacity: 0.8;
-						}
+						font-weight: 700;
 					}
 				}
 
@@ -216,7 +212,7 @@
 					font-weight: 300;
 					text-align: center;
 
-					&.width {
+					&.text {
 						max-width: 1500px;
 						width: 100%;
 						padding: 0 1rem;
@@ -225,6 +221,9 @@
 						text-align: left;
 						font-size: clamp(var(--sm), 3vw, var(--h5));
 						font-weight: 500;
+
+						display: flex;
+						align-items: baseline;
 
 						@media (width <= 500px) {
 							padding: 0;
