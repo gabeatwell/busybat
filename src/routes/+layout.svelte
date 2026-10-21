@@ -7,6 +7,7 @@
 	import SkipToMain from '$lib/components/layout/SkipToMain.svelte';
 	import LocalStorage from '$lib/components/layout/localStorage.svelte';
 	import LoadingSpinner from '$lib/components/layout/LoadingSpinner.svelte';
+	import SmoothScroll from '$lib/components/layout/Lenis.svelte';
 
 	let { children } = $props();
 	let isPageLoaded = $state(false);
@@ -25,6 +26,7 @@
 	});
 </script>
 
+<SmoothScroll />
 <LocalStorage />
 <ViewTransition />
 <SkipToMain />
@@ -50,9 +52,7 @@
 		margin: 0;
 		padding: 0;
 		width: 100%;
-		height: 100%;
 		min-height: 100vh;
-		overflow-y: auto;
 		display: flex;
 		flex-direction: column;
 	}
