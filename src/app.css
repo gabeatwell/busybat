@@ -92,7 +92,8 @@
 
 @layer base {
 	html {
-		height: 100%;
+		min-height: 100%;
+		height: auto;
 		position: relative;
 		overflow-x: clip;
 	}
@@ -103,11 +104,12 @@
 		margin: 0;
 		padding: 0;
 		width: 100%;
-		height: 100%;
+		min-height: 100svh;
+		height: auto;
 		position: relative;
-		overflow-x: hidden;
+		overflow-x: clip;
 		overscroll-behavior: none;
-		overflow-y: auto !important;
+		overflow-y: visible;
 		-webkit-overflow-scrolling: touch;
 		display: flex;
 		flex-direction: column;
@@ -130,7 +132,7 @@
 	@supports (-webkit-touch-callout: none) {
 		body,
 		html {
-			height: -webkit-fill-available;
+			min-height: -webkit-fill-available;
 		}
 	}
 

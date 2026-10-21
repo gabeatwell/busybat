@@ -6,10 +6,26 @@
 	type Props = {
 		gltf: string;
 		scrollLength?: number;
+		fit?: number;
 		class?: string;
+		offsetX?: number;
+		endRotation?: number;
+		spin?: number;
+		startScale?: number;
+		scale?: number;
 	};
 
-	let { gltf, scrollLength = 1, class: className = '' }: Props = $props();
+	let {
+		gltf,
+		scrollLength = 1,
+		class: className = '',
+		fit = 1.35,
+		offsetX = 0.16,
+		endRotation = -0.35,
+		spin = 0.45,
+		startScale = 1,
+		scale = 1
+	}: Props = $props();
 
 	let stage: HTMLDivElement;
 	let host: HTMLDivElement;
@@ -69,15 +85,22 @@
 				const center = box.getCenter(new THREE.Vector3());
 				const maxDim = Math.max(size.x, size.y, size.z) || 1;
 
-				// Normalise to ~2.6 world units and centre on the origin.
-				const scale = 2.6 / maxDim;
+				const baseScale = 2.6 / maxDim;
 				model.position.sub(center);
-				model.scale.setScalar(scale);
 
-				const modelWidth = size.x * scale;
-				const modelHeight = size.y * scale;
+				const modelRoot = new THREE.Group();
+				modelRoot.add(model);
+				modelRoot.scale.setScalar(baseScale * startScale);
+				pivot.add(modelRoot);
+
+				const frameScale = Math.max(startScale, scale);
+				const modelWidth = size.x * baseScale * frameScale;
+				const modelHeight = size.y * baseScale * frameScale;
+				const modelDepth = size.z * baseScale * frameScale;
+				const visualHeight = size.y * baseScale * startScale;
 
 				let startY = 0;
+				let endX = 0;
 				let endY = 0;
 				let dirty = true;
 
@@ -89,15 +112,21 @@
 					camera.aspect = width / height;
 					camera.updateProjectionMatrix();
 
+					const maxYaw = Math.max(Math.abs(endRotation), Math.abs(endRotation - spin));
+					const footprint = modelWidth * Math.cos(maxYaw) + modelDepth * Math.sin(maxYaw);
+
 					const tanFov = Math.tan((camera.fov * Math.PI) / 360);
 					const distance =
-						(Math.max(modelHeight / 2, modelWidth / 2 / camera.aspect) / tanFov) * 1.25;
+						(Math.max(modelHeight / 2, footprint / 2 / camera.aspect) / tanFov) * fit;
 					camera.position.set(0, 0, distance);
 					camera.lookAt(0, 0, 0);
 
-					// Park the model fully below the viewport, then bring it to centre.
 					const halfViewHeight = tanFov * distance;
-					startY = -(halfViewHeight + modelHeight / 2) * 1.05;
+					const halfViewWidth = halfViewHeight * camera.aspect;
+
+					startY = (halfViewHeight + visualHeight / 2) * 1.05;
+					startY = halfViewHeight + visualHeight * 0.3;
+					endX = halfViewWidth * offsetX;
 					endY = 0;
 
 					dirty = true;
@@ -108,37 +137,58 @@
 				layout();
 
 				let targetProgress = 1;
-				let currentProgress = 1;
 				let scrollTrigger: ScrollTrigger | undefined;
 
 				if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
 					targetProgress = 0;
-					currentProgress = 0;
 
 					scrollTrigger = ScrollTrigger.create({
 						trigger: stage,
 						start: 'top top',
 						end: 'bottom bottom',
+
 						onUpdate: (self) => (targetProgress = self.progress),
 						onRefresh: (self) => (targetProgress = self.progress)
 					});
 
 					targetProgress = scrollTrigger.progress;
-					currentProgress = targetProgress;
 				}
 
-				const render = () => {
-					currentProgress = targetProgress;
+				const arriveAt = 0.7;
+				let lastOpacity = -1;
 
-					const y = startY + (endY - startY) * currentProgress;
-					const rotation = -0.45 + 0.45 * currentProgress;
+				const render = () => {
+					const p = Math.min(targetProgress / arriveAt, 1);
+
+					const startRotation = endRotation - spin;
+					const rotation = startRotation + (endRotation - startRotation) * p;
+
+					const currentScale = startScale + (scale - startScale) * p;
+					const targetScale = baseScale * currentScale;
+
+					// fade in
+					const opacity = Math.min(targetProgress / 0.15, 1);
+					if (opacity !== lastOpacity) {
+						host.style.opacity = String(opacity);
+						lastOpacity = opacity;
+					}
+
+					if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+						host.style.opacity = '1';
+					}
+
+					const x = endX * p;
+					const y = startY + (endY - startY) * p;
 
 					if (
 						Math.abs(pivot.position.y - y) > 0.0001 ||
-						Math.abs(pivot.rotation.y - rotation) > 0.0005
+						Math.abs(pivot.position.x - x) > 0.0001 ||
+						Math.abs(pivot.rotation.y - rotation) > 0.0005 ||
+						Math.abs(modelRoot.scale.x - targetScale) > 0.0001
 					) {
-						pivot.position.y = y;
+						pivot.position.set(x, y, 0);
 						pivot.rotation.y = rotation;
+						modelRoot.scale.setScalar(targetScale);
 						dirty = true;
 					}
 
@@ -221,18 +271,17 @@
 		width: 100%;
 		display: grid;
 		place-items: center;
-		overflow: hidden;
+		/* overflow: hidden; */
 
 		.host {
 			position: absolute;
 			inset: 0;
 			opacity: 0;
-			transition: opacity 600ms ease;
 			pointer-events: none;
 
-			&.ready {
+			/* &.ready {
 				opacity: 1;
-			}
+			} */
 		}
 
 		.status {
