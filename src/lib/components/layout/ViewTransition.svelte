@@ -42,7 +42,7 @@
 	});
 
 	// view transition
-	onNavigate((navigation) => {
+	onNavigate(() => {
 		if (!supportsViewTransitions) {
 			// For browsers without View Transition support, just resolve immediately
 			return;

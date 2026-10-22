@@ -1,9 +1,7 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
 	import {
-		createToggleDropdownHandler,
 		createToggleEnlargementHandler,
-		createHandleDropdownState,
+		// createHandleDropdownState,
 		createDropdownHandlers,
 		trapFocus
 	} from './productFunctions.svelte';
@@ -28,7 +26,6 @@
 		price,
 		description,
 		imageUrl,
-		rating,
 		inStock,
 		context = 'default',
 		productUrl,
@@ -44,7 +41,6 @@
 		price: number;
 		description: string;
 		imageUrl: string;
-		rating?: number;
 		inStock: boolean;
 		context?: string;
 		productUrl: string;
@@ -59,7 +55,6 @@
 	// State variables
 	let isEnlarged = $state(false);
 	let isDropdownOpen = $state(false);
-	let isDropdownOpened = $state(false);
 	let isTransitioning = $state(false);
 
 	// Initialize browser detection
@@ -67,7 +62,8 @@
 	let supportsViewTransitions = $state(false);
 	let isFirefox = $state(false);
 
-	// Initialize cart state management
+	// Props are static per card instance, so capturing the initial values is intentional
+	// svelte-ignore state_referenced_locally
 	const cartState = createCartState(id);
 
 	// Product data for cart - make it reactive to include selected size
@@ -82,22 +78,21 @@
 	});
 	let addToCartHandler = $state<AddToCartHandler | null>(null);
 
+	// svelte-ignore state_referenced_locally
 	const selectHandlers = createSelectHandlers(id, cartState);
 	const accessibilityHelpers = createAccessibilityHelpers();
 	const dropdownHandlers = createDropdownHandlers();
 
+	// Referenced only by the commented-out <ProductActions> block below;
+	// keep it wired so re-enabling the Add-to-Cart UI is a one-line change.
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	async function handleAddToCart(e: MouseEvent) {
 		if (addToCartHandler) {
 			await addToCartHandler.handleAddToCart(e, addToCart ?? (() => {}), toggleEnlargement);
 		}
 	}
 
-	const toggleDropdown = createToggleDropdownHandler({
-		isDropdownOpen: (val?: boolean) =>
-			val !== undefined ? (isDropdownOpen = val) : isDropdownOpen,
-		id: () => id
-	});
-
+	// svelte-ignore state_referenced_locally
 	const toggleEnlargement = createToggleEnlargementHandler(
 		{ id, context },
 		{
@@ -108,7 +103,6 @@
 
 					if (!val) {
 						isDropdownOpen = false;
-						isDropdownOpened = false;
 					}
 
 					setTimeout(

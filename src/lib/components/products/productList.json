@@ -1,9 +1,15 @@
 [
 	{
 		"id": "1",
+		"slug": "menace",
 		"name": "Mini Menace Tote",
 		"imageUrl": "/products/mini.menace/mini-menace__forward.webp",
-		"description": "<p style='text-indent: 1rem'>Handmade with 100% cotton canvas and 100% cotton lining, the Mini Menace Tote is crafted for the busiest of bats. The ghostly slate blue canvas exterior boasts a haunting skull and bird print. But venture inside and you'll find a dark rainbow stripe lining with (1) zip pocket, (1) slide pocket with heart-shaped magnet closure, and (6) card slots for ease & organization. All brass-colored hardware, skull adorned zipper pulls, and an upcycled chain belt converted into a shoulder strap that is detachable.<br> <b>Dimensions: 11in L x 9in H x 5in D. Handle Drop: 5in</b></p> <br> <a target='_blank' href='/gallery#mini-menace-side' style='color: var(--color-info); font-family: var(--font-semibold);'>See the Mini Menace Tote in action!</a>",
+		"description": "Handmade with 100% cotton canvas and 100% cotton lining, the Mini Menace Tote is crafted for the busiest of bats.\nThe ghostly slate blue canvas exterior boasts a haunting skull and bird print. But venture inside and you'll find a dark rainbow stripe lining with (1) zip pocket, (1) slide pocket with heart-shaped magnet closure, and (6) card slots for ease & organization.\nAll brass-colored hardware, skull adorned zipper pulls, and an upcycled chain belt converted into a shoulder strap that is detachable.",
+		"dimensions": "11in L x 9in H x 5in D. Handle Drop: 5in",
+		"galleryLink": {
+			"href": "/gallery#mini-menace-side",
+			"label": "See the Mini Menace Tote in action!"
+		},
 		"category": "Bags",
 		"inStock": true,
 		"productUrl": "/products/mini.menace/mini-menace__forward.webp",
@@ -11,9 +17,15 @@
 	},
 	{
 		"id": "2",
+		"slug": "major-menace",
 		"name": "Major Menace Tote",
 		"imageUrl": "/products/major.menace/major-menace__front.webp",
-		"description": "<p style='text-indent: 1rem'>The menace returns.. bigger, bolder, darker! The oversized version of it's sister, the mini menace, is stitched from black cotton canvas, lined with a haunted touch-- cream fabric with ghostly grey/brown bats, drifting stars, and a mournful moon (Alexander Henry design). With gunmetal hardware, the main zipper is gripped by a skull shaped pull. Inside, you'll find these compartments: (1) zippered pocket, (2) slip pockets, and (6) card slots. <br> <b>Dimensions: 13in L x 10.5in H x 4.5in W. Strap Length: 44in. Handle Drop: 5in</b></p> <br> <a target='_blank' href='/gallery#major-menace-front' style='color: var(--color-info); font-family: var(--font-semibold);'>See Major Menace Tote pictures!</a>",
+		"description": "The menace returns.. bigger, bolder, darker! The oversized version of it's sister, the mini menace, is stitched from black cotton canvas, lined with a haunted touch-- cream fabric with ghostly grey/brown bats, drifting stars, and a mournful moon (Alexander Henry design).\nWith gunmetal hardware, the main zipper is gripped by a skull shaped pull. Inside, you'll find these compartments: (1) zippered pocket, (2) slip pockets, and (6) card slots.",
+		"dimensions": "13in L x 10.5in H x 4.5in W. Strap Length: 44in. Handle Drop: 5in",
+		"galleryLink": {
+			"href": "/gallery#major-menace-front",
+			"label": "See Major Menace Tote pictures!"
+		},
 		"category": "Bags",
 		"inStock": true,
 		"productUrl": "/products/major.menace/major-menace__front.webp",
@@ -21,9 +33,14 @@
 	},
 	{
 		"id": "3",
+		"slug": "debbie",
 		"name": "Debbie Harry Jacket",
 		"imageUrl": "/products/d.harry/dh-jacket__back.webp",
-		"description": "<p style='text-indent: 1rem; margin-bottom: -.5rem;'>Risen from the grave of ordinary fashion, this upcycled Victorious denim jacket began as a simple grey soul before taking a bewitching dip in a cauldron of tie-die paint. Reborn with the siren of punk herself--Debbie Harry. Featuring patches from creators like Project Pinup and Wildflower Company. Hand painted animal print haunting the upper back with a wicked blend of fabric paints, mixed by my own hands under the watchful glow of the midnight moon.  <br> <a target='_blank' href='/gallery#dh-jacket-front' style='color: var(--color-info); font-family: var(--font-semibold);'>See D. Harry Denim Jacket pictures!</a>",
+		"description": "Risen from the grave of ordinary fashion, this upcycled Victorious denim jacket began as a simple grey soul before taking a bewitching dip in a cauldron of tie-die paint.\nReborn with the siren of punk herself--Debbie Harry. Featuring patches from creators like Project Pinup and Wildflower Company.\nHand painted animal print haunting the upper back with a wicked blend of fabric paints, mixed by my own hands under the watchful glow of the midnight moon.",
+		"galleryLink": {
+			"href": "/gallery#dh-jacket-front",
+			"label": "See D. Harry Denim Jacket pictures!"
+		},
 		"category": "Clothing",
 		"inStock": true,
 		"productUrl": "/products/d.harry/dh-jacket__back.webp",
@@ -31,9 +48,15 @@
 	},
 	{
 		"id": "4",
+		"slug": "dainty-red",
 		"name": "Dainty Doomsday Tote",
 		"imageUrl": "/products/dainty.doomsday/dainty-red__front.webp",
-		"description": "<p style='text-indent: 1rem'>A hauntingly perfect companion for those quick dashes to the market. The Dainty Doomsday Tote is cloaked in blood-red Sevenberry Boro Japanese patchwork cotton and lined with black cotton, this bag easily drapes over your shoulder with ease while handling your essentials--and secrets. Features: (1) outer slip pocket, (2) inner slip pockets with a 6 card slot component. Close it with a silver heart-shaped magnet snap that clicks shut like a spell.  <br> <b>Dimensions: 8.5in L x 11in H x 5in W. Handle Drop: 10.5in.</b></p> <br> <a target='_blank' href='/gallery#dainty-red-front' style='color: var(--color-info); font-family: var(--font-semibold);'>See Dainty Doomsday Tote in pictures!</a>",
+		"description": "A hauntingly perfect companion for those quick dashes to the market. The Dainty Doomsday Tote is cloaked in blood-red Sevenberry Boro Japanese patchwork cotton and lined with black cotton.\nThis bag easily drapes over your shoulder with ease while handling your essentials--and secrets. Features: (1) outer slip pocket, (2) inner slip pockets with a 6 card slot component.\nClose it with a silver heart-shaped magnet snap that clicks shut like a spell.",
+		"dimensions": "8.5in L x 11in H x 5in W. Handle Drop: 10.5in",
+		"galleryLink": {
+			"href": "/gallery#dainty-red-front",
+			"label": "See Dainty Doomsday Tote in pictures!"
+		},
 		"category": "Bags",
 		"inStock": true,
 		"productUrl": "/products/dainty.doomsday/dainty-red__front.webp",
@@ -41,9 +64,15 @@
 	},
 	{
 		"id": "5",
+		"slug": "dainty-pink",
 		"name": "Dainty Doomsday (Witches Brew)",
 		"imageUrl": "/products/dainty.doomsday/dainty-pink__front.webp",
-		"description": "<p style='text-indent: 1rem'>The Dainty Doomsday in Witches Brew is the smaller, no less sinister, sibling of Dainty Doomsday Tote. Cloaked with a black cotton canvas exterior and lined with the perfect balance of beauty and beyond with Dear Stella Witches Brew cotton, this bag easily drapes over your shoulder with ease while handling your essentials--and secrets. Features: (1) outer slip pocket, (2) inner slip pockets with a 6 card slot component. Close it with a silver heart-shaped magnet snap that clicks shut like a spell.  <br> <b>Dimensions: 8.5in L x 11in H x 5in W. Handle Drop: 10.5in.</b></p> <br> <a target='_blank' href='/gallery#dainty-pink-front' style='color: var(--color-info); font-family: var(--font-semibold);'>See Dainty Doomsday in Witches Brew pictures!</a>",
+		"description": "The Dainty Doomsday in Witches Brew is the smaller, no less sinister, sibling of the Dainty Doomsday Tote. Cloaked with a black cotton canvas exterior and lined with Dear Stella Witches Brew cotton.\nThis bag easily drapes over your shoulder with ease while handling your essentials--and secrets. Features: (1) outer slip pocket, (2) inner slip pockets with a 6 card slot component.\nClose it with a silver heart-shaped magnet snap that clicks shut like a spell.",
+		"dimensions": "8.5in L x 11in H x 5in W. Handle Drop: 10.5in",
+		"galleryLink": {
+			"href": "/gallery#dainty-pink-front",
+			"label": "See Dainty Doomsday in Witches Brew pictures!"
+		},
 		"category": "Bags",
 		"inStock": true,
 		"productUrl": "/products/dainty.doomsday/dainty-pink__front.webp",

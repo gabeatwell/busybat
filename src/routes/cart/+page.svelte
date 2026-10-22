@@ -11,7 +11,6 @@
 	// Get reactive cart data from the store - use the actual state references
 	let cartData = $derived(getCartData());
 	let cart = $derived(cartData.cart);
-	let customerEmail = $derived(cartData.customerEmail);
 	let isProcessingPayment = $derived(cartData.isProcessingPayment);
 	// Calculate cart total reactively
 	let cartTotal = $derived(
@@ -76,6 +75,19 @@
 						</div>
 
 						<div class="quantity-controls">
+							<button
+								class="qty-btn"
+								aria-label="Decrease quantity of {item.name}"
+								onclick={() => handleUpdateQuantity(item.id, item.quantity - 1, item.size)}
+								>−</button
+							>
+							<span class="qty-value">{item.quantity}</span>
+							<button
+								class="qty-btn"
+								aria-label="Increase quantity of {item.name}"
+								onclick={() => handleUpdateQuantity(item.id, item.quantity + 1, item.size)}
+								>+</button
+							>
 							<button class="remove-btn" onclick={() => handleRemoveItem(item.id, item.size)}
 								>Remove</button
 							>
@@ -277,6 +289,29 @@
 						gap: 0.75rem;
 						margin-top: 0.5rem;
 						flex-wrap: wrap;
+
+						& .qty-btn {
+							font-family: var(--font-semibold);
+							font-size: var(--h5);
+							color: var(--color-secondary);
+							background: none;
+							border: 1px solid var(--color-gray);
+							border-radius: var(--radius);
+							cursor: pointer;
+							padding: 0.25rem 0.6rem;
+							margin: 0;
+							line-height: 1;
+
+							&:hover {
+								border-color: var(--color-accent);
+								color: var(--color-accent);
+							}
+						}
+
+						& .qty-value {
+							min-width: 1.5rem;
+							text-align: center;
+						}
 
 						@media (width <= 768px) {
 							grid-area: controls;

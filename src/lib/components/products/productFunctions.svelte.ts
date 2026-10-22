@@ -114,6 +114,8 @@ export function createToggleEnlargementHandler(
 
 			const transition = document.startViewTransition(() => {
 				setState.isEnlarged(!setState.isEnlarged());
+				// read offsetHeight to force a synchronous reflow before the transition snapshots
+				// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 				document.body.offsetHeight;
 
 				// Add a small delay when enlarging to ensure proper positioning

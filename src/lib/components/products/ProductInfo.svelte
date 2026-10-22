@@ -35,16 +35,18 @@
 	<p class="product-price" class:expanded={isEnlarged}>{formatPrice(price)}</p>
 </div>
 
-<p
+<div
 	class="product-description"
 	class:expanded={isEnlarged}
 	id="product-description-{id}"
-	aria-label="Product description: {description.replace(/<[^>]*>/g, '')}"
 	role="region"
+	aria-label="Product description: {description.replace(/<[^>]*>/g, '')}"
 	aria-live={isEnlarged ? 'polite' : 'off'}
 >
-	{@html description}
-</p>
+	{#each description.split('\n') as para}
+		{#if para}<p>{para}</p>{/if}
+	{/each}
+</div>
 
 <style>
 	.product-line {

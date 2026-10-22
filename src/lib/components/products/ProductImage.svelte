@@ -21,7 +21,9 @@
 		isFirefox: boolean;
 	} = $props();
 
-	const useContainFit = imageFit === 'contain' || category === 'Bags' || category === 'Clothing';
+	const useContainFit = $derived(
+		imageFit === 'contain' || category === 'Bags' || category === 'Clothing'
+	);
 </script>
 
 <div class="product-image">

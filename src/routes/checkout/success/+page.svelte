@@ -40,6 +40,10 @@
 		<p>Your payment was successful and your order has been placed.</p>
 		<p>We've sent a confirmation email with your order details.</p>
 
+		{#if isVerified}
+			<p class="verified" role="status">✓ Payment verified</p>
+		{/if}
+
 		{#if sessionId}
 			<p class="order-id">Order Reference: {sessionId.substring(0, 8)}...</p>
 		{/if}

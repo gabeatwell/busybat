@@ -16,7 +16,7 @@
 	} = $props();
 	let isDropdownOpen = $state(false);
 
-	const actualDropdownImage = dropdownImage;
+	const actualDropdownImage = $derived(dropdownImage);
 
 	$effect(() => {
 		onStateChange?.(isDropdownOpen);

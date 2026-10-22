@@ -43,6 +43,9 @@ export default tseslint.config(
 			parserOptions: {
 				parser: tseslint.parser
 			}
+		},
+		rules: {
+			'sve;te/no-at-html-tags': 'off'
 		}
 	},
 	{

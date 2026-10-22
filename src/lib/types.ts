@@ -27,9 +27,12 @@ export interface User {
 /** A product from the product list */
 export interface Product {
 	id: string;
+	slug: string;
 	name: string;
 	imageUrl: string;
 	description: string;
+	dimensions?: string;
+	galleryLink?: { href: string; label: string };
 	category: string;
 	inStock: boolean;
 	productUrl: string;

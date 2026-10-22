@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
-
 	let {
 		title,
 		href,
@@ -10,16 +8,6 @@
 		href: string;
 		newTab?: boolean;
 	} = $props();
-
-	function handleClick() {
-		if (browser) {
-			if (newTab) {
-				window.open(href, '_blank');
-			} else {
-				window.location.href = href;
-			}
-		}
-	}
 </script>
 
 <a

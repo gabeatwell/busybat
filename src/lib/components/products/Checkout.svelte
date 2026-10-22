@@ -4,11 +4,8 @@
 		handleCheckout,
 		removeFromCart,
 		updateQuantity,
-		getCartTotal,
-		addToCart
+		getCartTotal
 	} from './CartStore.svelte';
-
-	export { addToCart };
 
 	// Get reactive cart data from the store
 	const { cart, customerEmail, isProcessingPayment, setEmail } = getCartData();
