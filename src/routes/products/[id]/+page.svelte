@@ -1,14 +1,10 @@
 <script lang="ts">
-	import { page } from '$app/state';
-	import { MODELS, type ModelKey } from '$lib/components/products/threejs-products/models';
-	import { error } from '@sveltejs/kit';
-	import type { Product } from '$lib/types';
-	import productList from '$lib/components/products/productList.json';
 	import ThreeDee from '$lib/components/products/threejs-products/ThreeDee.svelte';
+	import type { PageData } from './$types';
 
-	const id = $derived(page.params.id as ModelKey);
-	const products = productList as Product[];
-	const product = $derived(products.find((p) => p.slug === id || p.id === id));
+	let { data }: { data: PageData } = $props();
+	const id = $derived(data.id);
+	const product = $derived(data.product);
 
 	let atBottom = $state(false);
 	// svelte-ignore non_reactive_update
@@ -18,13 +14,6 @@
 		if (!panel) return;
 		atBottom = panel.scrollTop + panel.clientHeight >= panel.scrollHeight - 8;
 	}
-
-	// if unknown model names
-	$effect(() => {
-		if (!(id in MODELS)) {
-			error(404, `Unknown model: ${id}`);
-		}
-	});
 
 	// per model tuning
 	const config = $derived(
@@ -63,14 +52,12 @@
 	</div>
 {/if}
 
-{#if id in MODELS}
-	<ThreeDee
-		gltf={MODELS[id]}
-		endRotation={config.endRotation}
-		offsetX={config.offsetX}
-		scale={config.scale}
-	/>
-{/if}
+<ThreeDee
+	gltf={data.gltf}
+	endRotation={config.endRotation}
+	offsetX={config.offsetX}
+	scale={config.scale}
+/>
 
 <style>
 	.background-image {
