@@ -3,6 +3,9 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
 	plugins: [sveltekit()],
+	ssr: {
+		noExternal: ['gsap']
+	},
 	server: {
 		host: '0.0.0.0',
 		port: 5173,
