@@ -22,7 +22,8 @@
 			retro: { endRotation: -0.71, offsetX: 0.36, scale: 0.49 },
 			needle: { endRotation: -2, offsetX: 0.36, scale: 1 },
 			'debbie-harry': { endRotation: -1.85, offsetX: 0.36, scale: 1 },
-			'mini-menace': { endRotation: -0.75, offsetX: 0.36, scale: 1 }
+			'mini-menace': { endRotation: -0.75, offsetX: 0.36, scale: 1 },
+			'dainty-pink': { endRotation: -0.75, offsetX: 0.36, scale: 1 }
 		}[id] ?? { endRotation: -1.85, offsetX: 0.36, scale: 1 }
 	);
 </script>
