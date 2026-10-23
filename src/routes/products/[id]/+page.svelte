@@ -21,8 +21,8 @@
 			vintage: { endRotation: -0.41, offsetX: 0.36, scale: 0.7 },
 			retro: { endRotation: -0.71, offsetX: 0.36, scale: 0.49 },
 			needle: { endRotation: -2, offsetX: 0.36, scale: 1 },
-			debbie: { endRotation: -1.85, offsetX: 0.36, scale: 1 },
-			menace: { endRotation: -0.75, offsetX: 0.36, scale: 1 }
+			'debbie-harry': { endRotation: -1.85, offsetX: 0.36, scale: 1 },
+			'mini-menace': { endRotation: -0.75, offsetX: 0.36, scale: 1 }
 		}[id] ?? { endRotation: -1.85, offsetX: 0.36, scale: 1 }
 	);
 </script>
@@ -86,7 +86,7 @@
 		padding: 1.5rem 2rem;
 		background: rgb(255 255 255 / 0.82);
 		backdrop-filter: blur(6px);
-		border: 3px solid var(--color-accent);
+		box-shadow: 0 0 2px var(--color-secondary);
 		border-radius: 0 var(--radius) var(--radius) 0;
 		box-shadow: 0 8px 30px rgb(0 0 0 / 0.18);
 		background-color: var(--color-primary);
