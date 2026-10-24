@@ -12,6 +12,7 @@ export type ThreeDeeOptions = {
 	spin?: number;
 	startScale?: number;
 	scale?: number;
+	orbit?: boolean;
 };
 
 const defaults = {
@@ -20,7 +21,8 @@ const defaults = {
 	endRotation: -0.35,
 	spin: 0.45,
 	startScale: 1,
-	scale: 1
+	scale: 1,
+	orbit: true
 };
 
 export class ThreeDeeScene {
@@ -42,9 +44,10 @@ export class ThreeDeeScene {
 		try {
 			const THREE = await import('three');
 			const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js');
+			const { OrbitControls } = await import('three/addons/controls/OrbitControls.js');
 			if (this.disposed) return;
 
-			const { gltf, fit, offsetX, endRotation, spin, startScale, scale } = this.opts;
+			const { gltf, fit, offsetX, endRotation, spin, startScale, scale, orbit } = this.opts;
 
 			const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
 			renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -103,6 +106,25 @@ export class ThreeDeeScene {
 			let endX = 0;
 			let endY = 0;
 			let dirty = true;
+
+			const controls = new OrbitControls(camera, renderer.domElement);
+			controls.target.set(0, 0, 0);
+			controls.enableDamping = true;
+			controls.dampingFactor = 0.08;
+			controls.rotateSpeed = 0.55;
+			controls.enablePan = false;
+			controls.enableZoom = false;
+			// keep the product framing: no full spins, no flipping under the floor
+			controls.minPolarAngle = Math.PI * 0.28;
+			controls.maxPolarAngle = Math.PI * 0.72;
+			controls.minAzimuthAngle = -Math.PI * 0.3;
+			controls.maxAzimuthAngle = Math.PI * 0.3;
+			// drag only where a drag makes sense; touch keeps native page scroll
+			controls.enabled = orbit && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+			controls.addEventListener('change', () => {
+				dirty = true;
+			});
 
 			const layout = () => {
 				const width = host.clientWidth || 1;
@@ -190,6 +212,8 @@ export class ThreeDeeScene {
 					dirty = true;
 				}
 
+				controls.update();
+
 				if (dirty) {
 					renderer.render(scene, camera);
 					dirty = false;
@@ -203,6 +227,7 @@ export class ThreeDeeScene {
 				gsap.ticker.remove(render);
 				scrollTrigger?.kill();
 				resizeObserver.disconnect();
+				controls.dispose();
 
 				model.traverse((object) => {
 					const mesh = object as Mesh;

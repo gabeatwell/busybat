@@ -21,9 +21,10 @@
 			vintage: { endRotation: -0.41, offsetX: 0.36, scale: 0.7 },
 			retro: { endRotation: -0.71, offsetX: 0.36, scale: 0.49 },
 			needle: { endRotation: -2, offsetX: 0.36, scale: 1 },
-			'debbie-harry': { endRotation: -1.85, offsetX: 0.36, scale: 1 },
-			'mini-menace': { endRotation: -0.75, offsetX: 0.36, scale: 1 },
-			'dainty-pink': { endRotation: -0.75, offsetX: 0.36, scale: 1 }
+			'debbie-harry': { endRotation: -1.85, offsetX: 0.36, scale: 0.9 },
+			'major-menace': { endRotation: -0.55, offsetX: 0.36, scale: 0.8 },
+			'mini-menace': { endRotation: -0.75, offsetX: 0.36, scale: 0.8 },
+			'dainty-pink': { endRotation: -0.45, offsetX: 0.36, scale: 0.8 }
 		}[id] ?? { endRotation: -1.85, offsetX: 0.36, scale: 1 }
 	);
 </script>

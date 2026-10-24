@@ -11,6 +11,7 @@
 		spin?: number;
 		startScale?: number;
 		scale?: number;
+		orbit?: boolean;
 	};
 
 	let {
@@ -22,7 +23,8 @@
 		endRotation = -0.35,
 		spin = 0.45,
 		startScale = 1,
-		scale = 1
+		scale = 1,
+		orbit = true
 	}: Props = $props();
 
 	let stage: HTMLDivElement;
@@ -31,7 +33,16 @@
 	let scene = $state.raw<ThreeDeeScene | null>(null);
 
 	$effect(() => {
-		const s = new ThreeDeeScene({ gltf, fit, offsetX, endRotation, spin, startScale, scale });
+		const s = new ThreeDeeScene({
+			gltf,
+			fit,
+			offsetX,
+			endRotation,
+			spin,
+			startScale,
+			scale,
+			orbit
+		});
 		scene = s;
 		s.init(stage, host);
 
@@ -85,9 +96,14 @@
 			opacity: 0;
 			pointer-events: none;
 
-			/* &.ready {
-				opacity: 1;
-			} */
+			@media (hover: hover) and (pointer: fine) {
+				pointer-events: auto;
+				cursor: grab;
+
+				&:active {
+					cursor: grabbing;
+				}
+			}
 		}
 
 		.status {
