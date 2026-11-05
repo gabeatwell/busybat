@@ -1,6 +1,7 @@
 <script module lang="ts">
 	import { loadStripe } from '@stripe/stripe-js';
 	import { browser } from '$app/environment';
+	import { getConsent } from '$lib/data/cookieConsent';
 	import type { CartItem } from '$lib/types';
 
 	// Initialize state from localStorage or default values
@@ -25,8 +26,22 @@
 	let customerEmail = $state(savedEmail);
 	let isProcessingPayment = $state(false);
 
-	// Initialize Stripe
-	const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+	// Load Stripe lazily so it isn't fetched before consent is given.
+	// If the visitor declined cookies, Stripe is never loaded.
+	let stripePromise: ReturnType<typeof loadStripe> | null = null;
+
+	function getStripe() {
+		if (getConsent() === 'declined') {
+			return Promise.reject(
+				new Error(
+					'Stripe was not loaded because you declined cookies. Accept cookies to check out.'
+				)
+			);
+		}
+
+		stripePromise ??= loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+		return stripePromise;
+	}
 
 	// Add to cart function
 	export function addToCart(product: CartItem) {
@@ -118,7 +133,7 @@
 			}
 
 			const { sessionId } = (await response.json()) as { sessionId: string };
-			const stripe = await stripePromise;
+			const stripe = await getStripe();
 
 			if (!stripe) {
 				throw new Error('Stripe failed to initialize');

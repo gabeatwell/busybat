@@ -8,6 +8,7 @@
 	import LocalStorage from '$lib/components/layout/localStorage.svelte';
 	import LoadingSpinner from '$lib/components/layout/LoadingSpinner.svelte';
 	import SmoothScroll from '$lib/components/layout/Lenis.svelte';
+	import CookieBanner from '$lib/components/navigation/CookieBanner.svelte';
 
 	let { children } = $props();
 	let isPageLoaded = $state(false);
@@ -42,6 +43,8 @@
 
 	<div class="slot" id="main-content">
 		{@render children()}
+
+		<CookieBanner />
 	</div>
 
 	<Footer year={new Date().getFullYear()} name="Busy Little Bat Sewing." />
